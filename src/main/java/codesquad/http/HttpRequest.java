@@ -11,8 +11,8 @@ import java.util.Map;
 public class HttpRequest {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
-    private HttpRequestLine requestLine;
-    private Map<String, String> headers = new HashMap<>();
+    private final HttpRequestLine requestLine;
+    private final Map<String, String> headers = new HashMap<>();
 
     public HttpRequest(List<String> request) {
         this.requestLine = new HttpRequestLine(request.get(0));
@@ -24,7 +24,7 @@ public class HttpRequest {
         for (int line = 1; line < request.size() && !request.get(line).equals("\r\n"); line++) {
             String[] requestHeaderArgs = request.get(line).split(":");
             try {
-                headers.put(requestHeaderArgs[0], requestHeaderArgs[1]);
+                headers.put(requestHeaderArgs[0].trim(), requestHeaderArgs[1].trim());
             } catch (ArrayIndexOutOfBoundsException e) {
                 logger.error("{} 리퀘스트 헤더에 디렉티브가 없습니다.", request.get(line));
             }
@@ -55,7 +55,7 @@ public class HttpRequest {
         return headers.get("Accept");
     }
 
-    public boolean isValid() {
-        return requestLine != null;
+    public String getHeader(String headerName) {
+        return headers.get(headerName);
     }
 }

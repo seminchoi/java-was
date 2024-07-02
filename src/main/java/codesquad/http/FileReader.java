@@ -13,20 +13,22 @@ public class FileReader {
         String name = file.getName();
         int extensionIndex = name.lastIndexOf(".");
         if (extensionIndex < 0) {
-            //TODO : 처리 방안 생각
-            return ContentType.TEXT_PLAIN;
+            return ContentType.APPLICATION_OCTET_STREAM;
         }
-        String extension = name.substring(extensionIndex);
+        String extension = name.substring(extensionIndex + 1);
         return ContentType.fromFileExtension(extension);
     }
 
-    public byte[] getBytes() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new java.io.FileReader(file));
-        StringBuilder stringBuilder = new StringBuilder();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            stringBuilder.append(line);
+    public byte[] getBytes() {
+        try(BufferedReader bufferedReader = new BufferedReader(new java.io.FileReader(file))) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            return stringBuilder.toString().getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return stringBuilder.toString().getBytes();
     }
 }

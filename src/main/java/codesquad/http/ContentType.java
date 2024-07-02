@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public enum ContentType {
     TEXT_HTML("html", "text/html"),
     TEXT_CSS("css", "text/css"),
-    TEXT_PLAIN("plain", "text/plain"),
-    NONE("none", "none");
+    TEXT_PLAIN("txt", "text/plain"),
+    APPLICATION_OCTET_STREAM(".none", "application/octet-stream");
 
     private static final String headerName = "Content-Type";
     private final String fileExtension;
@@ -24,7 +24,7 @@ public enum ContentType {
             .collect(Collectors.toUnmodifiableMap(ContentType::getFileExtension, Function.identity()));
 
     public static ContentType fromFileExtension(String fileExtension) {
-        return extensionToContentType.getOrDefault(fileExtension, NONE);
+        return extensionToContentType.getOrDefault(fileExtension, APPLICATION_OCTET_STREAM);
     }
 
     public String getFileExtension() {
@@ -32,10 +32,6 @@ public enum ContentType {
     }
 
     public String makeHeaderLine() {
-        //TODO: 확장자 처리
-        if(this == NONE) {
-            return "";
-        }
         return headerName + ": " + directive + "\r\n";
     }
 }
