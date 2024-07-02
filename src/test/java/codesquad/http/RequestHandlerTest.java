@@ -2,11 +2,8 @@ package codesquad.http;
 
 import codesquad.TestResourcePathManager;
 import codesquad.TestSocket;
-import codesquad.config.ResourcePathManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,6 +34,10 @@ class RequestHandlerTest {
 
         String response = testSocket.getOutputStreamContent();
         assertTrue(response.contains("HTTP/1.1 400 BAD REQUEST"));
+    }
+
+    @Test
+    void 요청을_해석할_수_없으면_BAD_REQUEST를_반환한다() {
     }
 
     @Test
