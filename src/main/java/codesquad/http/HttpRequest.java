@@ -14,17 +14,14 @@ public class HttpRequest {
     private HttpRequestLine requestLine;
     private Map<String, String> headers = new HashMap<>();
 
-    public HttpRequest(List<String> request) throws IOException {
-        if(request.isEmpty()){
-            return;
-        }
+    public HttpRequest(List<String> request) {
         this.requestLine = new HttpRequestLine(request.get(0));
         parseRequestHeader(request);
     }
 
 
     private void parseRequestHeader(final List<String> request) {
-        for (int line = 1; line < request.size() && !request.get(line).equals("\r\n") ; line++) {
+        for (int line = 1; line < request.size() && !request.get(line).equals("\r\n"); line++) {
             String[] requestHeaderArgs = request.get(line).split(":");
             try {
                 headers.put(requestHeaderArgs[0], requestHeaderArgs[1]);
