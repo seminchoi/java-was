@@ -2,15 +2,12 @@ package codesquad;
 
 import codesquad.config.ResourcePathManager;
 import codesquad.http.HttpServer;
-import codesquad.http.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 public class Main {

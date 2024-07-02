@@ -30,6 +30,8 @@ public class RequestHandler {
                 return;
             }
 
+            logger.debug("request header: {}", request);
+
             HttpRequest httpRequest = new HttpRequest(request);
             boolean isCreated = createResponse(httpRequest, clientOutput);
 
@@ -55,7 +57,6 @@ public class RequestHandler {
 
         for (String defaultPath : resourcePathManager.getFilePaths()) {
             String path = System.getProperty("user.dir") + File.separator + defaultPath + url;
-            logger.info(path);
 
             File curFile = new File(path);
 
@@ -75,7 +76,6 @@ public class RequestHandler {
         clientOutput.write(fileReader.getContentType().makeHeaderLine().getBytes());
         clientOutput.write("\r\n".getBytes());
         clientOutput.write(fileReader.getBytes());
-        logger.debug("success - {}", file.getName());
         clientOutput.flush();
 
         return true;
