@@ -1,7 +1,7 @@
 package codesquad.http;
 
 import codesquad.Main;
-import codesquad.ThreadPool;
+import codesquad.config.ResourcePathManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,39 +11,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestHandler {
-    private static final List<String> defaultPaths = List.of("src/main/resources/static");
-
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
+    private final ResourcePathManager resourcePathManager;
+
+    public RequestHandler(ResourcePathManager resourcePathManager) {
+        this.resourcePathManager = resourcePathManager;
+    }
+
     public void handleRequest(Socket clientSocket) {
-        ThreadPool.submit(() -> {
+        try {
+            OutputStream clientOutput = clientSocket.getOutputStream();
+            List<String> request = readRequestHeader(clientSocket);
+
+            if (request.isEmpty()) {
+                clientOutput.write("HTTP/1.1 400 BAD REQUEST\r\n".getBytes());
+                clientOutput.flush();
+                return;
+            }
+
+            HttpRequest httpRequest = new HttpRequest(request);
+            boolean isCreated = createResponse(httpRequest, clientOutput);
+
+            if (!isCreated) {
+                clientOutput.write("HTTP/1.1 404 NOT FOUND\r\n".getBytes());
+                clientOutput.flush();
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        } finally {
             try {
-                OutputStream clientOutput = clientSocket.getOutputStream();
-                List<String> request = readRequestHeader(clientSocket);
-
-                if (request.isEmpty()) {
-                    clientOutput.write("HTTP/1.1 400 BAD REQUEST\r\n".getBytes());
-                    clientOutput.flush();
-                    return;
-                }
-
-                HttpRequest httpRequest = new HttpRequest(request);
-                boolean isCreated = createResponse(httpRequest, clientOutput);
-
-                if (!isCreated) {
-                    clientOutput.write("HTTP/1.1 404 NOT FOUND\r\n".getBytes());
-                    clientOutput.flush();
-                }
+                clientSocket.close();
             } catch (IOException e) {
                 logger.error(e.getMessage());
-            } finally {
-                try {
-                    clientSocket.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                }
             }
-        });
+        }
     }
 
     private boolean createResponse(HttpRequest httpRequest, OutputStream clientOutput) throws IOException {
@@ -51,13 +53,14 @@ public class RequestHandler {
 
         File file = null;
 
-        for (String defaultPath : defaultPaths) {
+        for (String defaultPath : resourcePathManager.getFilePaths()) {
             String path = System.getProperty("user.dir") + File.separator + defaultPath + url;
             logger.info(path);
 
-            file = new File(path);
+            File curFile = new File(path);
 
-            if (file.exists()) {
+            if (curFile.exists()) {
+                file = curFile;
                 break;
             }
         }
@@ -85,7 +88,7 @@ public class RequestHandler {
             BufferedReader reader = new BufferedReader(inputStreamReader);
 
             String line;
-            while (!(line = reader.readLine()).isEmpty()) {
+            while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 request.add(line);
             }
             return request;
