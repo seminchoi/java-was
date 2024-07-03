@@ -25,9 +25,8 @@ public class RequestHandler {
             List<String> request = readRequestHeader(clientSocket);
 
             if (request.isEmpty()) {
-                clientOutput.write("HTTP/1.1 400 BAD REQUEST\r\n".getBytes());
+                clientOutput.write(new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR).makeResponse());
                 clientOutput.flush();
-                return;
             }
 
             logger.debug("request header: {}", request);
@@ -36,7 +35,7 @@ public class RequestHandler {
             boolean isCreated = createResponse(httpRequest, clientOutput);
 
             if (!isCreated) {
-                clientOutput.write("HTTP/1.1 404 NOT FOUND\r\n".getBytes());
+                clientOutput.write(new HttpResponse(HttpStatus.NOT_FOUND).makeResponse());
                 clientOutput.flush();
             }
         } catch (IOException e) {
@@ -72,10 +71,10 @@ public class RequestHandler {
 
         FileReader fileReader = new FileReader(file);
 
-        clientOutput.write("HTTP/1.1 200 OK\r\n".getBytes());
-        clientOutput.write(fileReader.getContentType().makeHeaderLine().getBytes());
-        clientOutput.write("\r\n".getBytes());
-        clientOutput.write(fileReader.getBytes());
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
+        httpResponse.writeHeader("Content-Type", fileReader.getContentType().getDirective());
+        httpResponse.writeBody(fileReader.getBytes());
+        clientOutput.write(httpResponse.makeResponse());
         clientOutput.flush();
 
         return true;
