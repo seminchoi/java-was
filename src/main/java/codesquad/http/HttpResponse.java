@@ -5,6 +5,7 @@ import codesquad.exception.HttpException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -47,11 +48,21 @@ public class HttpResponse {
 
     public byte[] makeResponse() {
         byte[] header = makeHeader();
+
+        if (body == null) {
+            return header;
+        }
+
         byte[] response = new byte[header.length + body.length];
 
-        System.arraycopy(header, 0, response, 0, header.length);
-        System.arraycopy(body, 0, response, body.length, body.length);
+        for (int i = 0; i < header.length; i++) {
+            response[i] = header[i];
+        }
 
+        for (int i = header.length; i < header.length + body.length; i++) {
+            response[i] = body[i - header.length];
+        }
+        System.out.println(Arrays.toString(response));
         return response;
     }
 
@@ -63,10 +74,11 @@ public class HttpResponse {
                     .append((header.getValue())).append(crlf());
         }
         sb.append(crlf());
+        System.out.println(sb);
         return sb.toString().getBytes();
     }
 
     private String makeResponseLine() {
-        return httpVersion + " " + httpStatus.getStatus() + " " + httpStatus.getStatus();
+        return httpVersion + " " + httpStatus.getStatusCode() + " " + httpStatus.getStatus();
     }
 }
