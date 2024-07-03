@@ -24,9 +24,13 @@ public class HttpRequestTest {
 
         HttpRequest request = new HttpRequest(header);
 
+        assertThat(request.getMethod()).isEqualTo(HttpMethod.GET);
+        assertThat(request.getUri()).isEqualTo("/");
+        assertThat(request.getHttpVersion()).isEqualTo("HTTP/1.1");
         assertThat(request.getHost()).isEqualTo("www.example.com");
         assertThat(request.getConnection()).isEqualTo("keep-alive");
         assertThat(request.getAccept()).isEqualTo("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
         assertThat(request.getHeader("Cache-Control")).isEqualTo("max-age=0");
+
     }
 }
