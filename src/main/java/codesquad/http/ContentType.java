@@ -12,6 +12,7 @@ public enum ContentType {
     TEXT_PLAIN("txt", "text/plain"),
 
     IMAGE_X_ICON("ico", "image/x-icon"),
+    IMAGE_SVG_XML("svg", "image/svg+xml"),
     IMAGE_PNG("png", "image/png"),
     IMAGE_JPG("jpg", "image/jpg"),
 
@@ -35,6 +36,10 @@ public enum ContentType {
 
     public String getFileExtension() {
         return fileExtension;
+    }
+
+    public String getDirective() {
+        return directive;
     }
 
     public String makeHeaderLine() {
