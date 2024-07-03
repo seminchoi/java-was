@@ -1,6 +1,8 @@
 package codesquad.http;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class FileReader {
     private final File file;
@@ -20,13 +22,12 @@ public class FileReader {
     }
 
     public byte[] getBytes() {
-        try(BufferedReader bufferedReader = new BufferedReader(new java.io.FileReader(file))) {
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-            return stringBuilder.toString().getBytes();
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] fileBytes = new byte[(int) file.length()];
+
+            fileInputStream.read(fileBytes);
+
+            return fileBytes;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
