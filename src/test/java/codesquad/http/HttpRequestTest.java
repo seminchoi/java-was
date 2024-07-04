@@ -1,6 +1,5 @@
 package codesquad.http;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public class HttpRequestTest {
         HttpRequest request = new HttpRequest(header);
 
         assertThat(request.getMethod()).isEqualTo(HttpMethod.GET);
-        assertThat(request.getUri()).isEqualTo("/");
+        assertThat(request.getPath()).isEqualTo("/index.html");
         assertThat(request.getHttpVersion()).isEqualTo("HTTP/1.1");
         assertThat(request.getHost()).isEqualTo("www.example.com");
         assertThat(request.getConnection()).isEqualTo("keep-alive");
