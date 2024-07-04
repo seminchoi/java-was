@@ -8,7 +8,14 @@ import java.util.stream.Collectors;
 public enum ContentType {
     TEXT_HTML("html", "text/html"),
     TEXT_CSS("css", "text/css"),
+    TEXT_JAVASCRIPT("js", "text/javascript"),
     TEXT_PLAIN("txt", "text/plain"),
+
+    IMAGE_X_ICON("ico", "image/x-icon"),
+    IMAGE_SVG_XML("svg", "image/svg+xml"),
+    IMAGE_PNG("png", "image/png"),
+    IMAGE_JPG("jpg", "image/jpg"),
+
     APPLICATION_OCTET_STREAM(".none", "application/octet-stream");
 
     private static final String headerName = "Content-Type";
@@ -29,6 +36,10 @@ public enum ContentType {
 
     public String getFileExtension() {
         return fileExtension;
+    }
+
+    public String getDirective() {
+        return directive;
     }
 
     public String makeHeaderLine() {

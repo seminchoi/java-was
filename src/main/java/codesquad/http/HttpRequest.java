@@ -11,11 +11,19 @@ import java.util.Map;
 public class HttpRequest {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
-    private final HttpRequestLine requestLine;
+    private final HttpMethod method;
+    private final String uri;
+    private final String httpVersion;
     private final Map<String, String> headers = new HashMap<>();
 
     public HttpRequest(List<String> request) {
-        this.requestLine = new HttpRequestLine(request.get(0));
+        String[] requestLineArgs = request.get(0).split(" ");
+
+        //TODO: 요청이 올바르지 않을때 예외처리
+        this.method = HttpMethod.valueOf(requestLineArgs[0]);
+        this.uri = requestLineArgs[1];
+        this.httpVersion = requestLineArgs[2];
+
         parseRequestHeader(request);
     }
 
@@ -32,15 +40,15 @@ public class HttpRequest {
     }
 
     public HttpMethod getMethod() {
-        return requestLine.getMethod();
+        return method;
     }
 
     public String getUri() {
-        return requestLine.getUri();
+        return uri;
     }
 
     public String getHttpVersion() {
-        return requestLine.getHttpVersion();
+        return httpVersion;
     }
 
     public String getHost() {
