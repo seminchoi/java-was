@@ -1,10 +1,15 @@
 package codesquad.http;
 
+import codesquad.exception.HttpException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FileReader {
+    private static final Logger logger = LoggerFactory.getLogger(FileReader.class);
     private final File file;
 
     public FileReader(File file) {
@@ -29,7 +34,8 @@ public class FileReader {
 
             return fileBytes;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage(), e);
+            throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
