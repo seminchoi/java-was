@@ -5,6 +5,7 @@ import codesquad.exception.HttpException;
 import codesquad.http.HttpStatus;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class UserStorage {
     private final HashMap<String, User> users = new HashMap<>();
@@ -16,5 +17,10 @@ public class UserStorage {
             }
             users.put(user.getUserId(), user);
         }
+    }
+
+    public Optional<User> findByUserId(String userId) {
+        User user = users.get(userId);
+        return Optional.ofNullable(user);
     }
 }
