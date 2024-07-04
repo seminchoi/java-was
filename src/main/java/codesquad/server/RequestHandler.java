@@ -1,8 +1,8 @@
-package codesquad.http;
+package codesquad.server;
 
-import codesquad.config.StaticFileProcessor;
-import codesquad.config.RouteEntry;
-import codesquad.config.RouteEntryManager;
+import codesquad.http.HttpRequest;
+import codesquad.http.HttpResponse;
+import codesquad.http.HttpStatus;
 import codesquad.exception.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

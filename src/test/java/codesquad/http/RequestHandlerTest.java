@@ -1,9 +1,9 @@
 package codesquad.http;
 
-import codesquad.TestSocket;
 import codesquad.TestStaticFilePathManager;
-import codesquad.config.RouteEntryManager;
-import codesquad.config.StaticFileProcessor;
+import codesquad.server.RequestHandler;
+import codesquad.server.RouteEntryManager;
+import codesquad.server.StaticFileProcessor;
 import codesquad.exception.HttpException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,8 @@
-package codesquad.http;
+package codesquad.server;
 
 import codesquad.exception.HttpException;
+import codesquad.http.HttpRequest;
+import codesquad.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

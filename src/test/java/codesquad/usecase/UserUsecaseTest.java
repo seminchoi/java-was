@@ -1,6 +1,6 @@
 package codesquad.usecase;
 
-import codesquad.domain.UserStorage;
+import codesquad.storage.UserStorage;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import org.assertj.core.api.Assertions;

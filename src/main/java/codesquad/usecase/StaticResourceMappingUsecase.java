@@ -1,6 +1,6 @@
 package codesquad.usecase;
 
-import codesquad.config.StaticFileProcessor;
+import codesquad.server.StaticFileProcessor;
 import codesquad.http.HttpResponse;
 
 public class StaticResourceMappingUsecase {

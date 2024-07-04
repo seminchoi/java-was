@@ -1,5 +1,6 @@
-package codesquad.config;
+package codesquad.server;
 
+import codesquad.config.ObjectContainer;
 import codesquad.http.HttpMethod;
 
 import java.util.ArrayList;

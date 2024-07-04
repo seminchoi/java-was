@@ -1,6 +1,6 @@
-package codesquad.domain;
+package codesquad.storage;
 
-import codesquad.domain.user.User;
+import codesquad.model.User;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpStatus;
 

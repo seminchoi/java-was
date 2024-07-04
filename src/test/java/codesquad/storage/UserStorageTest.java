@@ -1,7 +1,6 @@
-package codesquad.storage.user;
+package codesquad.storage;
 
-import codesquad.domain.UserStorage;
-import codesquad.domain.user.User;
+import codesquad.model.User;
 import codesquad.exception.HttpException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

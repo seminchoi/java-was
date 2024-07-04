@@ -1,4 +1,4 @@
-package codesquad.config;
+package codesquad.server;
 
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;

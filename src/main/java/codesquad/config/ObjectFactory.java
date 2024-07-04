@@ -1,7 +1,10 @@
 package codesquad.config;
 
-import codesquad.domain.UserStorage;
-import codesquad.http.RequestHandler;
+import codesquad.storage.UserStorage;
+import codesquad.server.RequestHandler;
+import codesquad.server.RouteEntryManager;
+import codesquad.server.StaticFilePathManager;
+import codesquad.server.StaticFileProcessor;
 import codesquad.usecase.StaticResourceMappingUsecase;
 import codesquad.usecase.UserUsecase;
 

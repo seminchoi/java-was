@@ -1,4 +1,4 @@
-package codesquad.domain.user;
+package codesquad.model;
 
 import codesquad.exception.HttpException;
 import codesquad.http.HttpStatus;

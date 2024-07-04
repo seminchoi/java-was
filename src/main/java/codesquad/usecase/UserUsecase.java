@@ -1,7 +1,7 @@
 package codesquad.usecase;
 
-import codesquad.domain.user.User;
-import codesquad.domain.UserStorage;
+import codesquad.model.User;
+import codesquad.storage.UserStorage;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;

@@ -1,6 +1,6 @@
 package codesquad;
 
-import codesquad.config.StaticFilePathManager;
+import codesquad.server.StaticFilePathManager;
 
 import java.util.List;
 
