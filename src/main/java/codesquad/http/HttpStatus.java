@@ -3,7 +3,7 @@ package codesquad.http;
 public enum HttpStatus {
     OK(200, "OK"),
 
-    SEE_OTHER(303, "SEE OTHER"),
+    SEE_OTHER(303, "See Other"),
 
     BAD_REQUEST(400, "Bad Request"),
     CONFLICT(409, "Conflict"),
