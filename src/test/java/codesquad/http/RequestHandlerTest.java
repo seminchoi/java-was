@@ -1,53 +1,48 @@
 package codesquad.http;
 
-import codesquad.TestResourcePathManager;
-import codesquad.TestSocket;
+import codesquad.TestStaticFilePathManager;
+import codesquad.server.RequestHandler;
+import codesquad.server.RouteEntryManager;
+import codesquad.server.StaticFileProcessor;
+import codesquad.exception.HttpException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RequestHandlerTest {
 
     private RequestHandler requestHandler;
-    private TestSocket testSocket;
 
     @BeforeEach
     void setUp() {
-        requestHandler = new RequestHandler(new TestResourcePathManager());
-        testSocket = new TestSocket();
-    }
-
-    @Test
-    void 요청이_null이면_BAD_REQUEST를_반환한다() {
-        requestHandler.handleRequest(testSocket);
-
-        String response = testSocket.getOutputStreamContent();
-        assertTrue(response.contains("HTTP/1.1 400 BAD REQUEST"));
+        TestStaticFilePathManager testStaticFilePathManager = new TestStaticFilePathManager();
+        StaticFileProcessor staticFileProcessor = new StaticFileProcessor(testStaticFilePathManager);
+        requestHandler = new RequestHandler(new RouteEntryManager(), staticFileProcessor);
     }
 
     @Test
     void 요청이_비어있으면_BAD_REQUST를_반환한다() {
-        testSocket.setInputStreamContent("\r\n");
+        HttpRequest httpRequest = new HttpRequest(List.of());
 
-        requestHandler.handleRequest(testSocket);
+        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        String response = new String(httpResponse.makeResponse());
 
-        String response = testSocket.getOutputStreamContent();
         assertTrue(response.contains("HTTP/1.1 400 BAD REQUEST"));
     }
 
     @Test
-    void 요청을_해석할_수_없으면_BAD_REQUEST를_반환한다() {
-    }
-
-    @Test
     void GET_요청이_파일일_때_파일이_있으면_파일을_읽어서_반환한다() {
-        String request = "GET /hello.hi.html HTTP/1.1\r\nHost: localhost\r\n\r\n";
-        testSocket.setInputStreamContent(request);
+        HttpRequest httpRequest = new HttpRequest(List.of(
+                "GET /hello.hi.html HTTP/1.1"
+        ));
 
-        requestHandler.handleRequest(testSocket);
+        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        String response = new String(httpResponse.makeResponse());
 
-        String response = testSocket.getOutputStreamContent();
         assertTrue(response.contains("HTTP/1.1 200 OK"));
         assertTrue(response.contains("Content-Type: text/html"));
         assertTrue(response.contains("<!DOCTYPE html>"));
@@ -55,12 +50,11 @@ class RequestHandlerTest {
 
     @Test
     void GET_요청이_파일일_때_파일이_없으면_NOT_FOUND를_반환한다() {
-        String request = "GET /hello.html HTTP/1.1\r\nHost: localhost\r\n\r\n";
-        testSocket.setInputStreamContent(request);
+        HttpRequest httpRequest = new HttpRequest(List.of(
+                "GET /hello.html HTTP/1.1"
+        ));
 
-        requestHandler.handleRequest(testSocket);
-
-        String response = testSocket.getOutputStreamContent();
-        assertTrue(response.contains("HTTP/1.1 404 NOT FOUND"));
+        assertThatThrownBy(() -> requestHandler.handleRequest(httpRequest))
+                .isInstanceOf(HttpException.class);
     }
 }
