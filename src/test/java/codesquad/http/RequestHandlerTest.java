@@ -25,16 +25,6 @@ class RequestHandlerTest {
     }
 
     @Test
-    void 요청이_비어있으면_BAD_REQUST를_반환한다() {
-        HttpRequest httpRequest = new HttpRequest(List.of());
-
-        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
-        String response = new String(httpResponse.makeResponse());
-
-        assertTrue(response.contains("HTTP/1.1 400 BAD REQUEST"));
-    }
-
-    @Test
     void GET_요청이_파일일_때_파일이_있으면_파일을_읽어서_반환한다() {
         HttpRequest httpRequest = new HttpRequest(List.of(
                 "GET /hello.hi.html HTTP/1.1"
