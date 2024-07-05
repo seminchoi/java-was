@@ -2,14 +2,14 @@ package codesquad.server;
 
 import codesquad.exception.HttpException;
 import codesquad.http.ContentType;
-import codesquad.http.FileReader;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URL;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class StaticFileProcessor {
     private final static Logger logger = LoggerFactory.getLogger(StaticFileProcessor.class);
