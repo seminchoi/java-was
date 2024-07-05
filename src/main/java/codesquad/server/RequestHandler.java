@@ -23,7 +23,6 @@ public class RequestHandler {
             if(entry.matches(httpRequest)) {
                 HttpResponse response = entry.getHandler().apply(httpRequest);
                 if(response != null) {
-                    logger.debug("response");
                     return response;
                 }
             }
