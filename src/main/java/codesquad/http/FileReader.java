@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+@Deprecated
 public class FileReader {
     private static final Logger logger = LoggerFactory.getLogger(FileReader.class);
     private final File file;

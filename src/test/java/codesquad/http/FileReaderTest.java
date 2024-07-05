@@ -6,6 +6,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Deprecated
 public class FileReaderTest {
     @Test
     void 파일의_확장자를_확인할_수_있다() {
