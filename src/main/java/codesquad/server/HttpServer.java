@@ -54,6 +54,8 @@ public class HttpServer {
 
         } catch (IOException e) {
             logger.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         } finally {
             try {
                 clientSocket.close();
