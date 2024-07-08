@@ -56,8 +56,7 @@ public class HttpRequestParser {
 
         Map<String, String> headers = parseRequestHeader(request);
 
-        HttpRequest httpRequest = new HttpRequest(httpMethod, uri, httpVersion, headers);
-        return httpRequest;
+        return new HttpRequest(httpMethod, uri, httpVersion, headers);
     }
 
     private static Map<String, String> parseRequestHeader(final List<String> request) {
