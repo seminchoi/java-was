@@ -9,6 +9,9 @@ public class Params {
     private final Map<String, String> params = new HashMap<>();
 
     public Params(String query) {
+        if(query == null) {
+            return;
+        }
         String[] pairs = query.split("&");
         for (String pair : pairs) {
             String[] splitPair = pair.split("=");
