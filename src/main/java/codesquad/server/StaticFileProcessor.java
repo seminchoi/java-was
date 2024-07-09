@@ -26,28 +26,27 @@ public class StaticFileProcessor {
 
     public HttpResponse readFile(String path) {
         byte[] fileBytes = null;
-        StringBuilder pathBuilder = new StringBuilder();
-        for (String defaultPath : staticFilePathManager.getFilePaths()) {
+        String fullPath = path;
+        for (String pathPrefix : staticFilePathManager.getFilePaths()) {
             try {
-                pathBuilder.append(defaultPath).append(path);
-                URL url = StaticFileProcessor.class.getResource(pathBuilder.toString());
-                if(url == null) {
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+                //TODO: 요청이 /가 아닌데 /로 끝날 때는 /를 땐 곳으로 리다이렉트 시킨다.
+                fullPath = makeFullPath(pathPrefix, path);
+                URL url = classLoader.getResource(fullPath);
+                if (url == null) {
                     continue;
                 }
 
-                if(isDirectory(url, pathBuilder.toString())) {
-                    if(!pathBuilder.toString().endsWith("/")) {
-                        pathBuilder.append("/");
-                    }
-                    pathBuilder.append("index.html");
-                    url = StaticFileProcessor.class.getResource(pathBuilder.toString());
-                    if(url == null) {
+                if (isDirectory(url, fullPath)) {
+                    fullPath = fullPath + "/index.html";
+                    url = classLoader.getResource(fullPath);
+                    if (url == null) {
                         continue;
                     }
                 }
 
-                logger.info(url.getFile());
-                InputStream inputStream = StaticFileProcessor.class.getResourceAsStream(pathBuilder.toString());
+                InputStream inputStream = classLoader.getResourceAsStream(fullPath);
                 if (inputStream != null) {
                     fileBytes = getBytes(inputStream);
                 }
@@ -61,10 +60,17 @@ public class StaticFileProcessor {
         }
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
-        httpResponse.writeHeader("Content-Type", getContentType(pathBuilder.toString()).getDirective());
+        httpResponse.writeHeader("Content-Type", getContentType(fullPath).getDirective());
         httpResponse.writeBody(fileBytes);
 
         return httpResponse;
+    }
+
+    private String makeFullPath(String pathPrefix, String path) {
+        if (path.equals("/")) {
+            return pathPrefix;
+        }
+        return pathPrefix + path;
     }
 
 
@@ -73,9 +79,6 @@ public class StaticFileProcessor {
             try {
                 JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
                 JarFile jar = jarConnection.getJarFile();
-                if(path.startsWith("/")) {
-                    path = path.substring(1);
-                }
                 JarEntry entry = jar.getJarEntry(path);
                 return entry.isDirectory();
             } catch (IOException e) {
