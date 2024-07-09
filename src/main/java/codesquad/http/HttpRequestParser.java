@@ -43,6 +43,8 @@ public class HttpRequestParser {
             throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        logger.info("request header: {}", request);
+
         String[] requestLineArgs = request.get(0).split(" ");
         HttpMethod httpMethod = HttpMethod.valueOf(requestLineArgs[0]);
         URI uri;
