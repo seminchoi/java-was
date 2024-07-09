@@ -1,15 +1,19 @@
 package codesquad.http;
 
+import codesquad.exception.HttpException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class HttpRequestTest {
+public class HttpRequestParserTest {
     @Test
-    public void Http_request_header를_읽고_해석할_수_있다() {
+    public void Http_request를_읽고_해석할_수_있다() {
         String header =
                 "POST /user/create HTTP/1.1\r\n" +
                         "Host: www.example.com\r\n" +
@@ -32,5 +36,24 @@ public class HttpRequestTest {
         assertThat(request.getHost()).isEqualTo("www.example.com");
         assertThat(request.getConnection()).isEqualTo("keep-alive");
         assertThat(request.getBody()).isEqualTo("userId=semin&name=semin&password=1234");
+    }
+
+    @Test
+    public void Http_request가_비어있으면_HttpException이_발생한다() {
+        String header = "";
+
+        InputStream inputStream = new ByteArrayInputStream(header.getBytes());
+
+        assertThatThrownBy(() -> HttpRequestParser.parseRequest(inputStream))
+                .isInstanceOf(HttpException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Hello", "GOT / HTTP/1.1"})
+    public void request_line의_문법이_올바르지_않으면_HttpException이_발생한다(String header) {
+        InputStream inputStream = new ByteArrayInputStream(header.getBytes());
+
+        assertThatThrownBy(() -> HttpRequestParser.parseRequest(inputStream))
+                .isInstanceOf(HttpException.class);
     }
 }
