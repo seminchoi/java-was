@@ -48,17 +48,30 @@ public class UserUsecase {
             throw new HttpException(HttpStatus.NOT_FOUND);
         }
 
-        Session session = new Session();
-        sessionStorage.save(session, user);
+        Session session = new Session(user);
+        sessionStorage.save(session);
 
         Cookie cookie = new Cookie.Builder("SID", session.getSessionId())
                 .maxAge(7 * 24 * 60 * 60).build();
 
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
-        httpResponse.writeHeader("Location", "/");
+        httpResponse.writeHeader("Location", "/main");
         httpResponse.setCookie(cookie.makeHeaderLine());
 
+        return httpResponse;
+    }
+
+    public HttpResponse logout(HttpRequest httpRequest) {
+        String sessionId = httpRequest.getCookie("SID");
+        Session session = sessionStorage.find(sessionId).orElseThrow(
+                () -> new HttpException(HttpStatus.UNAUTHORIZED)
+        );
+
+        sessionStorage.remove(session.getSessionId());
+
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
+        httpResponse.writeHeader("Location", "/");
         return httpResponse;
     }
 }

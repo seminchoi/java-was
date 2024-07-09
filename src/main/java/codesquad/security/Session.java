@@ -1,5 +1,7 @@
 package codesquad.security;
 
+import codesquad.model.User;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -7,10 +9,12 @@ public class Session {
     private static final long DEFAULT_SESSION_TIMEOUT_MILLIS = 7 * 24 * 60 * 60 * 1000;
     private final String sessionId;
     private final long createdAt;
+    private final User user;
 
-    public Session() {
+    public Session(User user) {
         this.sessionId = UUID.randomUUID().toString();
-        createdAt = System.currentTimeMillis();
+        this.createdAt = System.currentTimeMillis();
+        this.user = user;
     }
 
     public boolean isExpired() {

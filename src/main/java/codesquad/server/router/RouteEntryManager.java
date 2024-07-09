@@ -21,6 +21,12 @@ public class RouteEntryManager {
                         .handler((httpRequest) -> ObjectContainer.getUserUsecase().login(httpRequest))
                         .build()
         );
+
+        routeEntry.add(
+                new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
+                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().logout(httpRequest))
+                        .build()
+        );
     }
 
     public List<RouteEntry> getRouteEntry() {

@@ -4,22 +4,21 @@ import codesquad.model.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class SessionStorage {
-    private final Map<Session, User> sessions = new HashMap<>();
-    private final Map<User, Session> reverseSessions = new HashMap<>();
+    private final Map<String, Session> sessions = new HashMap<>();
 
 
-    public void save(Session session, User user) {
-        if(reverseSessions.containsKey(user)) {
-            Session oldSession = reverseSessions.get(user);
-            reverseSessions.remove(user);
-            sessions.remove(oldSession);
-        }
-        sessions.put(session, user);
+    public void save(Session session) {
+        sessions.put(session.getSessionId(), session);
     }
 
-    public User getUser(Session session) {
-        return sessions.get(session);
+    public void remove(String sessionId) {
+        sessions.remove(sessionId);
+    }
+
+    public Optional<Session> find(String sessionId) {
+        return Optional.ofNullable(sessions.get(sessionId));
     }
 }
