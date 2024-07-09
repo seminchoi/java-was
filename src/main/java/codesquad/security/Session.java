@@ -1,5 +1,6 @@
 package codesquad.security;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Session {
@@ -18,5 +19,18 @@ public class Session {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return Objects.equals(sessionId, session.sessionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sessionId);
     }
 }
