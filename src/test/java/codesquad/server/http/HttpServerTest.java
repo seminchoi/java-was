@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.server.http;
 
 import org.junit.jupiter.api.Test;
 

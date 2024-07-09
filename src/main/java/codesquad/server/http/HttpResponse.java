@@ -1,11 +1,10 @@
-package codesquad.http;
+package codesquad.server.http;
 
 import codesquad.exception.HttpException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

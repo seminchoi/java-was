@@ -1,10 +1,10 @@
 package codesquad.config;
 
 import codesquad.storage.UserStorage;
-import codesquad.server.RequestHandler;
-import codesquad.server.RouteEntryManager;
-import codesquad.server.StaticFilePathManager;
-import codesquad.server.StaticFileProcessor;
+import codesquad.server.router.RequestHandler;
+import codesquad.server.router.RouteEntryManager;
+import codesquad.server.router.StaticFilePathManager;
+import codesquad.server.router.StaticFileProcessor;
 import codesquad.usecase.UserUsecase;
 
 public class ObjectFactory {

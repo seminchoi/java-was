@@ -1,7 +1,7 @@
-package codesquad.server;
+package codesquad.server.router;
 
 import codesquad.config.ObjectContainer;
-import codesquad.http.HttpMethod;
+import codesquad.server.http.HttpMethod;
 
 import java.util.ArrayList;
 import java.util.List;

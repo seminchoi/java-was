@@ -1,8 +1,8 @@
-package codesquad.server;
+package codesquad.server.router;
 
-import codesquad.http.HttpRequest;
-import codesquad.http.HttpResponse;
-import codesquad.http.HttpStatus;
+import codesquad.server.http.HttpRequest;
+import codesquad.server.http.HttpResponse;
+import codesquad.server.http.HttpStatus;
 import codesquad.exception.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

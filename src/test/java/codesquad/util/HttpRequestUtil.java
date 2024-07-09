@@ -1,7 +1,7 @@
 package codesquad.util;
 
-import codesquad.http.HttpMethod;
-import codesquad.http.HttpRequest;
+import codesquad.server.http.HttpMethod;
+import codesquad.server.http.HttpRequest;
 
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.server.http;
 
 import java.util.Arrays;
 import java.util.Map;

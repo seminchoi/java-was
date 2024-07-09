@@ -1,10 +1,10 @@
-package codesquad.server;
+package codesquad.server.router;
 
 import codesquad.exception.HttpException;
-import codesquad.http.HttpMethod;
-import codesquad.http.HttpRequest;
-import codesquad.http.HttpResponse;
-import codesquad.http.HttpStatus;
+import codesquad.server.http.HttpMethod;
+import codesquad.server.http.HttpRequest;
+import codesquad.server.http.HttpResponse;
+import codesquad.server.http.HttpStatus;
 import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

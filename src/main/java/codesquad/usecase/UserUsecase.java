@@ -1,9 +1,9 @@
 package codesquad.usecase;
 
-import codesquad.http.HttpRequest;
-import codesquad.http.HttpResponse;
-import codesquad.http.HttpStatus;
-import codesquad.http.Params;
+import codesquad.server.http.HttpRequest;
+import codesquad.server.http.HttpResponse;
+import codesquad.server.http.HttpStatus;
+import codesquad.server.http.Params;
 import codesquad.model.User;
 import codesquad.storage.UserStorage;
 

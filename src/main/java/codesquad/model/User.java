@@ -1,7 +1,7 @@
 package codesquad.model;
 
 import codesquad.exception.HttpException;
-import codesquad.http.HttpStatus;
+import codesquad.server.http.HttpStatus;
 
 public class User {
     private String userId;

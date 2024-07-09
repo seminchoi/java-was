@@ -1,7 +1,7 @@
 package codesquad.config;
 
 import codesquad.storage.UserStorage;
-import codesquad.server.RequestHandler;
+import codesquad.server.router.RequestHandler;
 import codesquad.usecase.UserUsecase;
 
 public class ObjectContainer {

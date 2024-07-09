@@ -1,4 +1,4 @@
-package codesquad.http;
+package codesquad.server.http;
 
 public enum HttpStatus {
     OK(200, "OK"),

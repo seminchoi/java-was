@@ -1,6 +1,9 @@
-package codesquad.http;
+package codesquad.server.http;
 
 import codesquad.exception.HttpException;
+import codesquad.server.http.HttpMethod;
+import codesquad.server.http.HttpRequest;
+import codesquad.server.http.HttpRequestParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
