@@ -36,6 +36,13 @@ public class HttpRequest {
         this.body = body;
     }
 
+    public boolean isUrlEndingWithSlash() {
+        if(getPath().equals("/")) {
+            return false;
+        }
+        return uri.getPath().endsWith("/");
+    }
+
     public HttpMethod getMethod() {
         return method;
     }
