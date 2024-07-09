@@ -47,18 +47,21 @@ public class HttpRequestParser {
 
         String[] requestLineArgs = request.get(0).split(" ");
         HttpMethod httpMethod = HttpMethod.valueOf(requestLineArgs[0]);
-        URI uri;
-        try {
-            uri = new URI(requestLineArgs[1]);
-        } catch (URISyntaxException e) {
-            logger.info(e.getMessage());
-            throw new HttpException(HttpStatus.BAD_REQUEST);
-        }
+        URI uri = parseRequestURI(requestLineArgs[1]);
         String httpVersion = requestLineArgs[2];
 
         Map<String, String> headers = parseRequestHeader(request);
 
         return new HttpRequest(httpMethod, uri, httpVersion, headers);
+    }
+
+    private static URI parseRequestURI(String requestURI) {
+        try {
+            return new URI(requestURI);
+        } catch (URISyntaxException e) {
+            logger.info(e.getMessage());
+            throw new HttpException(HttpStatus.BAD_REQUEST);
+        }
     }
 
     private static Map<String, String> parseRequestHeader(final List<String> request) {
