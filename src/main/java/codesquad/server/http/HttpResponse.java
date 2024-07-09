@@ -1,13 +1,13 @@
 package codesquad.server.http;
 
 import codesquad.exception.HttpException;
+import codesquad.server.structure.MultiValueMap;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static codesquad.util.StringUtils.addCrlf;
 import static codesquad.util.StringUtils.crlf;
@@ -21,7 +21,7 @@ public class HttpResponse {
 
     private String httpVersion;
     private HttpStatus httpStatus;
-    private Map<String, String> headers = new HashMap<>();
+    private MultiValueMap<String, String> headers = new MultiValueMap<>();
     private byte[] body;
 
     public HttpResponse(HttpStatus httpStatus) {
@@ -38,6 +38,10 @@ public class HttpResponse {
 
     public void writeHeader(String key, String value) {
         headers.put(key, value);
+    }
+
+    public void setCookie(String value) {
+        headers.put("Set-Cookie", value);
     }
 
     public void writeBody(byte[] body) {
@@ -63,9 +67,12 @@ public class HttpResponse {
     private byte[] makeHeader() {
         StringBuilder sb = new StringBuilder();
         sb.append(addCrlf(makeResponseLine()));
-        for (Map.Entry<String, String> header : headers.entrySet()) {
-            sb.append(header.getKey()).append(": ")
-                    .append((header.getValue())).append(crlf());
+        for (String key : headers.keySet()) {
+            List<String> values = headers.get(key);
+            for (String value : values) {
+                sb.append(key).append(": ")
+                        .append((value)).append(crlf());
+            }
         }
         sb.append(crlf());
         return sb.toString().getBytes();
