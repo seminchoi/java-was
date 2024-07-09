@@ -12,7 +12,13 @@ public class RouteEntryManager {
     public RouteEntryManager() {
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
-                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().createUser(httpRequest))
+                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().register(httpRequest))
+                        .build()
+        );
+
+        routeEntry.add(
+                new RouteEntry.Builder().route(HttpMethod.POST, "/login")
+                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().login(httpRequest))
                         .build()
         );
     }
