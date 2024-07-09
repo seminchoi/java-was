@@ -46,6 +46,7 @@ public class StaticFileProcessor {
                     }
                 }
 
+                logger.info("found file path {}", fullPath);
                 InputStream inputStream = classLoader.getResourceAsStream(fullPath);
                 if (inputStream != null) {
                     fileBytes = getBytes(inputStream);
