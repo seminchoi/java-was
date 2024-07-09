@@ -46,7 +46,17 @@ public class HttpRequestParser {
         logger.info("request header: {}", request);
 
         String[] requestLineArgs = request.get(0).split(" ");
-        HttpMethod httpMethod = HttpMethod.valueOf(requestLineArgs[0]);
+        if (requestLineArgs.length != 3) {
+            throw new HttpException(HttpStatus.BAD_REQUEST);
+        }
+
+        HttpMethod httpMethod;
+        try {
+            httpMethod = HttpMethod.valueOf(requestLineArgs[0]);
+        } catch (IllegalArgumentException e) {
+            throw new HttpException(HttpStatus.BAD_REQUEST);
+        }
+
         URI uri = parseRequestURI(requestLineArgs[1]);
         String httpVersion = requestLineArgs[2];
 
@@ -81,7 +91,7 @@ public class HttpRequestParser {
     private static void writeBody(final BufferedReader bufferedReader, final HttpRequest httpRequest) throws IOException {
         int contentLength = httpRequest.getContentLength();
 
-        if(contentLength <= 0) {
+        if (contentLength <= 0) {
             return;
         }
 
