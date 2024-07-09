@@ -5,6 +5,7 @@ import codesquad.model.User;
 import codesquad.security.Session;
 import codesquad.security.SessionStorage;
 import codesquad.server.http.*;
+import codesquad.server.structure.Params;
 import codesquad.storage.UserStorage;
 
 public class UserUsecase {

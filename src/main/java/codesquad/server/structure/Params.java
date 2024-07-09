@@ -1,6 +1,7 @@
-package codesquad.server.http;
+package codesquad.server.structure;
 
 import codesquad.exception.HttpException;
+import codesquad.server.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
