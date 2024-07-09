@@ -35,7 +35,7 @@ public class UserUsecaseTest {
         HttpResponse httpResponse = userUsecase.createUser(httpRequest);
         String response = new String(httpResponse.makeResponse());
 
-        Assertions.assertThat(response).contains("HTTP/1.1 303 See Other");
+        Assertions.assertThat(response).contains("HTTP/1.1 302 Found");
         Assertions.assertThat(response).contains("Location: /");
     }
 }
