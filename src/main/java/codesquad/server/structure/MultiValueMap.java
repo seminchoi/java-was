@@ -8,6 +8,7 @@ public class MultiValueMap <K, V> {
     public void put(K key, V value) {
         List<V> values = map.getOrDefault(key, new ArrayList<>());
         values.add(value);
+        map.put(key, values);
     }
 
     public V getFirst(K key) {
