@@ -69,6 +69,17 @@ public class HttpRequest {
         return headers.get(headerName);
     }
 
+    public String getCookie(String name) {
+        String[] cookies = headers.get("Cookie").split(";");
+        for (String cookie : cookies) {
+            String[] pair = cookie.split("=");
+            if(pair[0].trim().equals(name)) {
+                return pair[1].trim();
+            }
+        }
+        return null;
+    }
+
     public int getContentLength() {
         return Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
     }
