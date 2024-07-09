@@ -27,7 +27,7 @@ public class UserUsecase {
         userStorage.saveUser(user);
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.SEE_OTHER);
-        httpResponse.writeHeader("Location", "/login/index.html");
+        httpResponse.writeHeader("Location", "/");
 
         return httpResponse;
     }
