@@ -8,6 +8,8 @@ import codesquad.server.http.*;
 import codesquad.server.structure.Params;
 import codesquad.storage.UserStorage;
 
+import java.util.Optional;
+
 public class UserUsecase {
     private final UserStorage userStorage;
     private final SessionStorage sessionStorage;
@@ -44,8 +46,8 @@ public class UserUsecase {
         String userId = params.get("userId");
         String password = params.get("password");
 
-        User user = userStorage.findByUserId(userId).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
-        if (!user.getPassword().equals(password)) {
+        User user = authenticate(userId, password);
+        if (user == null) {
             HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
             httpResponse.writeHeader("Location", "/login/login_failed.html");
 
@@ -58,7 +60,6 @@ public class UserUsecase {
         Cookie cookie = new Cookie.Builder("SID", session.getSessionId())
                 .maxAge(session.getMaxAge()).build();
 
-
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
         httpResponse.writeHeader("Location", "/main");
         httpResponse.setCookie(cookie.makeHeaderLine());
@@ -66,10 +67,23 @@ public class UserUsecase {
         return httpResponse;
     }
 
+    private User authenticate(String userId, String password) {
+        Optional<User> optionalUser = userStorage.findByUserId(userId);
+        if (optionalUser.isEmpty()) {
+            return null;
+        }
+        User user = optionalUser.get();
+        if (!user.getPassword().equals(password)) {
+            return null;
+
+        }
+        return user;
+    }
+
     public HttpResponse logout(HttpRequest httpRequest) {
         String sessionId = httpRequest.getCookie("SID");
 
-        if(sessionId == null) {
+        if (sessionId == null) {
             throw new HttpException(HttpStatus.UNAUTHORIZED);
         }
 
