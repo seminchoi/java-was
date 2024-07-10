@@ -71,6 +71,10 @@ public class HttpRequest {
     }
 
     public String getCookie(String name) {
+        if(!headers.containsKey("Cookie")) {
+            return null;
+        }
+
         String[] cookies = headers.get("Cookie").split(";");
         for (String cookie : cookies) {
             String[] pair = cookie.split("=");
