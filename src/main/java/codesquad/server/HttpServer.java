@@ -53,17 +53,18 @@ public class HttpServer {
             outputStream.write(httpResponse.makeResponse());
             outputStream.flush();
 
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             try {
                 clientSocket.close();
-                logger.debug("socket closed");
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                logger.error(e.getMessage(), e);
             }
         }
+    }
+
+    public void shutdownServer() {
+        executorService.shutdown();
     }
 }
