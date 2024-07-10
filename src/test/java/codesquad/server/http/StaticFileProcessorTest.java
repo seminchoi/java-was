@@ -2,8 +2,6 @@ package codesquad.server.http;
 
 import codesquad.server.router.StaticFilePathManager;
 import codesquad.server.router.StaticFileProcessor;
-import codesquad.server.http.ContentType;
-import codesquad.server.http.HttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
