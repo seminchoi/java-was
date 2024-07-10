@@ -20,10 +20,6 @@ public class MultiValueMap <K, V> {
     }
 
     public List<V> get(K key) {
-        List<V> values = map.get(key);
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
         return map.getOrDefault(key, new ArrayList<>()).stream().toList();
     }
 
