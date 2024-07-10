@@ -49,6 +49,10 @@ public class HttpResponse {
         headers.put("Content-Length", body.length + "");
     }
 
+    public List<String> getHeader(String key) {
+        return headers.get(key);
+    }
+
     public byte[] makeResponse() {
         byte[] header = makeHeader();
 
