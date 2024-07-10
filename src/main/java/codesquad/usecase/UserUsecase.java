@@ -46,14 +46,14 @@ public class UserUsecase {
 
         User user = userStorage.findByUserId(userId).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
         if (!user.getPassword().equals(password)) {
-            throw new HttpException(HttpStatus.NOT_FOUND);
+            throw new HttpException(HttpStatus.UNAUTHORIZED);
         }
 
         Session session = new Session(user);
         sessionStorage.save(session);
 
         Cookie cookie = new Cookie.Builder("SID", session.getSessionId())
-                .maxAge(7 * 24 * 60 * 60).build();
+                .maxAge(0).build();
 
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
@@ -65,6 +65,11 @@ public class UserUsecase {
 
     public HttpResponse logout(HttpRequest httpRequest) {
         String sessionId = httpRequest.getCookie("SID");
+
+        if(sessionId == null) {
+            throw new HttpException(HttpStatus.UNAUTHORIZED);
+        }
+
         Session session = sessionStorage.find(sessionId).orElseThrow(
                 () -> new HttpException(HttpStatus.UNAUTHORIZED)
         );
