@@ -47,7 +47,7 @@ public class Cookie {
         }
 
         if (sameSite != null) {
-            header.append("; SameSite=").append(sameSite.toString());
+            header.append("; SameSite=").append(sameSite.getValue());
         }
 
         return header.toString();
