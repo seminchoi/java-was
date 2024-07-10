@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Session {
-    private static final long DEFAULT_SESSION_TIMEOUT_MILLIS = 7 * 24 * 60 * 60 * 1000;
+    private static final long DEFAULT_SESSION_TIMEOUT_MILLIS = 7 * 24 * 60 * 60 * 1000L;
     private final String sessionId;
     private final long createdAt;
     private final User user;
@@ -23,6 +23,10 @@ public class Session {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    public long getMaxAge() {
+        return DEFAULT_SESSION_TIMEOUT_MILLIS / 1000L;
     }
 
     @Override
