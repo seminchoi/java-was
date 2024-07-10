@@ -2,15 +2,16 @@ package codesquad.server;
 
 import codesquad.exception.HttpException;
 import codesquad.http.HttpRequest;
+import codesquad.http.HttpRequestParser;
 import codesquad.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +39,7 @@ public class HttpServer {
     private void sendResponse(Socket clientSocket) {
         try {
             InputStream inputStream = clientSocket.getInputStream();
-            HttpRequest httpRequest = readRequest(inputStream);
+            HttpRequest httpRequest = HttpRequestParser.parseRequest(inputStream);
             logger.info(httpRequest.getPath());
             HttpResponse httpResponse;
             OutputStream outputStream = clientSocket.getOutputStream();
@@ -53,6 +54,8 @@ public class HttpServer {
 
         } catch (IOException e) {
             logger.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         } finally {
             try {
                 clientSocket.close();
@@ -61,27 +64,5 @@ public class HttpServer {
                 logger.error(e.getMessage());
             }
         }
-    }
-
-    private HttpRequest readRequest(InputStream inputStream) throws IOException {
-        HttpRequest httpRequest = null;
-        try {
-            List<String> request = new ArrayList<>();
-
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-
-            String line;
-            while ((line = reader.readLine()) != null && !line.isEmpty()) {
-                request.add(line);
-            }
-
-            httpRequest = new HttpRequest(request);
-            return httpRequest;
-        } catch (IOException e) {
-            logger.error("{}_{} - {}", getClass().getName(), "readRequestHeader", e.getMessage());
-        }
-
-        return httpRequest;
     }
 }

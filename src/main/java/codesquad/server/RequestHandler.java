@@ -19,17 +19,23 @@ public class RequestHandler {
     }
 
     public HttpResponse handleRequest(HttpRequest httpRequest) {
+        if (httpRequest.isUrlEndingWithSlash()) {
+            HttpResponse httpResponse = new HttpResponse(HttpStatus.SEE_OTHER);
+            httpResponse.writeHeader("Location", httpRequest.getPath().substring(0, httpRequest.getPath().length() - 1));
+            return httpResponse;
+        }
+
         for (RouteEntry entry : routeEntryManager.getRouteEntry()) {
-            if(entry.matches(httpRequest)) {
+            if (entry.matches(httpRequest)) {
                 HttpResponse response = entry.getHandler().apply(httpRequest);
-                if(response != null) {
+                if (response != null) {
                     return response;
                 }
             }
         }
 
         HttpResponse httpResponse = staticFileProcessor.readFile(httpRequest.getPath());
-        if(httpResponse != null) {
+        if (httpResponse != null) {
             return httpResponse;
         }
 

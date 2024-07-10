@@ -3,6 +3,7 @@ package codesquad.http;
 public enum HttpStatus {
     OK(200, "OK"),
 
+    FOUND(302, "Found"),
     SEE_OTHER(303, "See Other"),
 
     BAD_REQUEST(400, "Bad Request"),

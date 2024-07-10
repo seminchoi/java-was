@@ -1,10 +1,11 @@
 package codesquad.usecase;
 
-import codesquad.model.User;
-import codesquad.storage.UserStorage;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
+import codesquad.http.Params;
+import codesquad.model.User;
+import codesquad.storage.UserStorage;
 
 public class UserUsecase {
     private final UserStorage userStorage;
@@ -13,17 +14,20 @@ public class UserUsecase {
         this.userStorage = userStorage;
     }
 
-    public HttpResponse createUser(HttpRequest request) {
-        String userId = request.getParam("userId");
-        String password = request.getParam("password");
-        String name = request.getParam("name");
+    public HttpResponse createUser(HttpRequest httpRequest) {
+        String body = httpRequest.getBody();
+        Params params = new Params(body);
+
+        String userId = params.get("userId");
+        String password = params.get("password");
+        String name = params.get("name");
 
         User user = new User(userId, password, name);
 
         userStorage.saveUser(user);
 
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.SEE_OTHER);
-        httpResponse.writeHeader("Location", "/login/index.html");
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
+        httpResponse.writeHeader("Location", "/");
 
         return httpResponse;
     }

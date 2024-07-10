@@ -5,7 +5,6 @@ import codesquad.server.RequestHandler;
 import codesquad.server.RouteEntryManager;
 import codesquad.server.StaticFilePathManager;
 import codesquad.server.StaticFileProcessor;
-import codesquad.usecase.StaticResourceMappingUsecase;
 import codesquad.usecase.UserUsecase;
 
 public class ObjectFactory {
@@ -23,10 +22,6 @@ public class ObjectFactory {
 
     protected RouteEntryManager routeEntryManager() {
         return new RouteEntryManager();
-    }
-
-    protected StaticResourceMappingUsecase requestMappingUsecase() {
-        return new StaticResourceMappingUsecase(resourcePathManager());
     }
 
     protected StaticFileProcessor resourcePathManager() {
