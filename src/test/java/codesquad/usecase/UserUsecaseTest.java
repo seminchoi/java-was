@@ -50,11 +50,13 @@ public class UserUsecaseTest {
     }
 
     @Test
-    void 패스워드가_잘못되면_HttpException을_반환한다() throws URISyntaxException {
+    void 아이디_패스워드가_잘못되면_login_failed페이지로_리다이렉트한다() throws URISyntaxException {
         register();
+        HttpResponse httpResponse = login("semin", "12345");
 
-        assertThatThrownBy(() -> login("semin", "12345"))
-                .isInstanceOf(HttpException.class);
+        String response = new String(httpResponse.makeResponse());
+        assertThat(response).contains("HTTP/1.1 302 Found");
+        assertThat(response).contains("Location: /login/login_failed.html");
     }
 
     @Test
