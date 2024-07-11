@@ -1,4 +1,4 @@
-package codesquad.server;
+package codesquad.server.router;
 
 import java.util.List;
 

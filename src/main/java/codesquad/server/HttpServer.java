@@ -1,9 +1,10 @@
 package codesquad.server;
 
 import codesquad.exception.HttpException;
-import codesquad.http.HttpRequest;
-import codesquad.http.HttpRequestParser;
-import codesquad.http.HttpResponse;
+import codesquad.server.http.HttpRequest;
+import codesquad.server.http.HttpRequestParser;
+import codesquad.server.http.HttpResponse;
+import codesquad.server.router.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,17 +53,18 @@ public class HttpServer {
             outputStream.write(httpResponse.makeResponse());
             outputStream.flush();
 
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
             try {
                 clientSocket.close();
-                logger.debug("socket closed");
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                logger.error(e.getMessage(), e);
             }
         }
+    }
+
+    public void shutdownServer() {
+        executorService.shutdown();
     }
 }

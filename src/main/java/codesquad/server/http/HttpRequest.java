@@ -1,5 +1,6 @@
-package codesquad.http;
+package codesquad.server.http;
 
+import codesquad.server.structure.Params;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,21 @@ public class HttpRequest {
 
     public String getHeader(String headerName) {
         return headers.get(headerName);
+    }
+
+    public String getCookie(String name) {
+        if(!headers.containsKey("Cookie")) {
+            return null;
+        }
+
+        String[] cookies = headers.get("Cookie").split(";");
+        for (String cookie : cookies) {
+            String[] pair = cookie.split("=");
+            if(pair[0].trim().equals(name)) {
+                return pair[1].trim();
+            }
+        }
+        return null;
     }
 
     public int getContentLength() {

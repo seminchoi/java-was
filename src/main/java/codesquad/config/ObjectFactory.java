@@ -1,15 +1,20 @@
 package codesquad.config;
 
+import codesquad.security.SessionStorage;
 import codesquad.storage.UserStorage;
-import codesquad.server.RequestHandler;
-import codesquad.server.RouteEntryManager;
-import codesquad.server.StaticFilePathManager;
-import codesquad.server.StaticFileProcessor;
+import codesquad.server.router.RequestHandler;
+import codesquad.server.router.RouteEntryManager;
+import codesquad.server.router.StaticFilePathManager;
+import codesquad.server.router.StaticFileProcessor;
 import codesquad.usecase.UserUsecase;
 
 public class ObjectFactory {
     protected UserUsecase userUsecase() {
-        return new UserUsecase(userStorage());
+        return new UserUsecase(userStorage(), sessionStorage());
+    }
+
+    protected SessionStorage sessionStorage() {
+        return new SessionStorage();
     }
 
     protected UserStorage userStorage() {

@@ -2,7 +2,7 @@ package codesquad.storage;
 
 import codesquad.model.User;
 import codesquad.exception.HttpException;
-import codesquad.http.HttpStatus;
+import codesquad.server.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Optional;
