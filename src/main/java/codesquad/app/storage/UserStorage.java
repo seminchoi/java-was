@@ -4,20 +4,21 @@ import codesquad.app.model.User;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserStorage {
-    private final HashMap<String, User> users = new HashMap<>();
+    private final Map<String, User> users = new ConcurrentHashMap<>();
 
     public void saveUser(User user) {
-        synchronized (users) {
-            if(users.containsKey(user.getUserId())) {
+        users.compute(user.getUserId(), (userId, curUser) -> {
+            if (curUser != null) {
                 throw new HttpException(HttpStatus.CONFLICT);
             }
-            users.put(user.getUserId(), user);
-        }
+            return user;
+        });
     }
 
     public Optional<User> findByUserId(String userId) {

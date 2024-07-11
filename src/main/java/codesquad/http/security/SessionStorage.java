@@ -3,9 +3,10 @@ package codesquad.http.security;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SessionStorage {
-    private final Map<String, Session> sessions = new HashMap<>();
+    private final Map<String, Session> sessions = new ConcurrentHashMap<>();
 
 
     public void save(Session session) {
