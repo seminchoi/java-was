@@ -1,12 +1,11 @@
 package codesquad.app.usecase;
 
-import codesquad.app.usecase.UserUsecase;
+import codesquad.app.storage.UserStorage;
 import codesquad.exception.HttpException;
-import codesquad.http.security.SessionStorage;
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
-import codesquad.app.storage.UserStorage;
+import codesquad.http.security.SessionStorage;
 import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ public class UserUsecaseTest {
         String response = new String(httpResponse.makeResponse());
 
         assertThat(response).contains("HTTP/1.1 302 Found");
-        assertThat(response).contains("Location: /main");
+        assertThat(response).contains("Location: /");
     }
 
     @Test
