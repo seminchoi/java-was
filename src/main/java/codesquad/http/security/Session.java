@@ -25,9 +25,14 @@ public class Session {
         return sessionId;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public long getMaxAge() {
         return DEFAULT_SESSION_TIMEOUT_MILLIS / 1000L;
     }
+
 
     @Override
     public boolean equals(Object o) {

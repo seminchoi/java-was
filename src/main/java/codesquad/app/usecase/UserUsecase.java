@@ -1,7 +1,7 @@
 package codesquad.app.usecase;
 
 import codesquad.exception.HttpException;
-import codesquad.http.DynamicHtml;
+import codesquad.template.DynamicHtml;
 import codesquad.app.model.User;
 import codesquad.http.security.Session;
 import codesquad.http.security.SessionStorage;
@@ -23,6 +23,26 @@ public class UserUsecase {
     public UserUsecase(UserStorage userStorage, SessionStorage sessionStorage) {
         this.userStorage = userStorage;
         this.sessionStorage = sessionStorage;
+    }
+
+    public HttpResponse home(HttpRequest httpRequest) {
+        Session session = getSession(httpRequest);
+
+        boolean isAuthenticated = session != null && !session.isExpired();
+        DynamicHtml dynamicHtml = new DynamicHtml();
+        dynamicHtml.setArg("authenticated", isAuthenticated);
+        if(isAuthenticated) {
+            User user = session.getUser();
+            dynamicHtml.setArg("user", user);
+        }
+        AppFileReader fileReader = new AppFileReader("static/index.html");
+        String content = fileReader.getContent();
+        String processed = dynamicHtml.process(content);
+
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
+        httpResponse.writeBody(processed.getBytes());
+
+        return httpResponse;
     }
 
     public HttpResponse register(HttpRequest httpRequest) {
@@ -67,7 +87,7 @@ public class UserUsecase {
                 .maxAge(session.getMaxAge()).build();
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
-        httpResponse.writeHeader("Location", "/main");
+        httpResponse.writeHeader("Location", "/");
         httpResponse.setCookie(cookie.makeHeaderLine());
 
         return httpResponse;
@@ -109,9 +129,9 @@ public class UserUsecase {
             return httpResponse;
         }
 
-        AppFileReader fileReader = new AppFileReader("/static/user/user_list.html");
-
+        AppFileReader fileReader = new AppFileReader("static/user/user_list.html");
         String content = fileReader.getContent();
+
         DynamicHtml dynamicHtml = new DynamicHtml();
         List<User> users = userStorage.findAll();
         dynamicHtml.setArg("users", users);
@@ -130,7 +150,7 @@ public class UserUsecase {
             return null;
         }
 
-        Session session = sessionStorage.find(sessionId).get();
-        return session;
+        Optional<Session> session = sessionStorage.find(sessionId);
+        return session.orElse(null);
     }
 }

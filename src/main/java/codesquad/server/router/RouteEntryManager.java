@@ -11,6 +11,12 @@ public class RouteEntryManager {
 
     public RouteEntryManager() {
         routeEntry.add(
+                new RouteEntry.Builder().route(HttpMethod.GET, "/")
+                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().home(httpRequest))
+                        .build()
+        );
+
+        routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
                         .handler((httpRequest) -> ObjectContainer.getUserUsecase().register(httpRequest))
                         .build()
