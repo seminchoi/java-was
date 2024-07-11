@@ -1,16 +1,10 @@
 package codesquad.server;
 
-import codesquad.exception.HttpException;
-import codesquad.http.HttpRequest;
-import codesquad.http.HttpRequestParser;
-import codesquad.http.HttpResponse;
-import codesquad.server.handler.RequestHandler;
+import codesquad.server.handler.SocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -21,50 +15,35 @@ public class HttpServer {
 
     private final ServerSocket serverSocket;
     private final ExecutorService executorService;
-    private final RequestHandler requestHandler;
-
-    public HttpServer(int port, int threadPoolSize, RequestHandler requestHandler) throws IOException {
+    private final SocketHandler socketHandler;
+    
+    private boolean active = true; 
+    
+    public HttpServer(int port, int threadPoolSize, SocketHandler socketHandler) throws IOException {
         this.serverSocket = new ServerSocket(port);
         this.executorService = Executors.newFixedThreadPool(threadPoolSize);
-        this.requestHandler = requestHandler;
+        this.socketHandler = socketHandler;
     }
 
-    public void service() throws IOException {
+    public void service() {
         logger.info("Listening for connection on port 8080 ....");
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            executorService.submit(() -> sendResponse(clientSocket));
-        }
+        executorService.execute(this::startServer);
     }
 
-    private void sendResponse(Socket clientSocket) {
-        try {
-            InputStream inputStream = clientSocket.getInputStream();
-            HttpRequest httpRequest = HttpRequestParser.parseRequest(inputStream);
-            logger.info(httpRequest.getPath());
-            HttpResponse httpResponse;
-            OutputStream outputStream = clientSocket.getOutputStream();
+    private void startServer() {
+        while (active) {
+            Socket clientSocket;
             try {
-                httpResponse = requestHandler.handleRequest(httpRequest);
-            } catch (HttpException e) {
-                httpResponse = HttpResponse.fromHttpException(e);
-            }
-
-            outputStream.write(httpResponse.makeResponse());
-            outputStream.flush();
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        } finally {
-            try {
-                clientSocket.close();
+                clientSocket = serverSocket.accept();
+                executorService.execute(() -> socketHandler.handle(clientSocket));
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                throw new RuntimeException(e);
             }
         }
     }
 
-    public void shutdownServer() {
+    public void stop() {
+        active = false;
         executorService.shutdown();
     }
 }

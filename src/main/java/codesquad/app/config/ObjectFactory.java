@@ -3,6 +3,7 @@ package codesquad.app.config;
 import codesquad.http.security.SessionStorage;
 import codesquad.app.storage.UserStorage;
 import codesquad.server.handler.RequestHandler;
+import codesquad.server.handler.SocketHandler;
 import codesquad.server.router.RouteEntryManager;
 import codesquad.server.router.StaticFilePathManager;
 import codesquad.server.handler.StaticFileHandler;
@@ -35,5 +36,9 @@ public class ObjectFactory {
 
     protected StaticFilePathManager staticFilePathManager() {
         return new StaticFilePathManager();
+    }
+
+    protected SocketHandler socketHandler() {
+        return new SocketHandler(requestHandler());
     }
 }

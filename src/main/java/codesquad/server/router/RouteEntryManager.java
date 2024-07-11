@@ -12,31 +12,31 @@ public class RouteEntryManager {
     public RouteEntryManager() {
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/")
-                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().home(httpRequest))
+                        .handler((httpRequest) -> ObjectContainer.userUsecase().home(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
-                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().register(httpRequest))
+                        .handler((httpRequest) -> ObjectContainer.userUsecase().register(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/login")
-                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().login(httpRequest))
+                        .handler((httpRequest) -> ObjectContainer.userUsecase().login(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
-                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().logout(httpRequest))
+                        .handler((httpRequest) -> ObjectContainer.userUsecase().logout(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
-                        .handler((httpRequest) -> ObjectContainer.getUserUsecase().userList(httpRequest))
+                        .handler((httpRequest) -> ObjectContainer.userUsecase().userList(httpRequest))
                         .build()
         );
     }
