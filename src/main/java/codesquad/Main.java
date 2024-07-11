@@ -1,6 +1,6 @@
 package codesquad;
 
-import codesquad.config.ObjectContainer;
+import codesquad.app.config.ObjectContainer;
 import codesquad.server.HttpServer;
 
 import java.io.IOException;

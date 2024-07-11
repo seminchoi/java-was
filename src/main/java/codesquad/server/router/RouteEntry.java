@@ -1,8 +1,8 @@
 package codesquad.server.router;
 
-import codesquad.server.http.HttpMethod;
-import codesquad.server.http.HttpRequest;
-import codesquad.server.http.HttpResponse;
+import codesquad.http.HttpMethod;
+import codesquad.http.HttpRequest;
+import codesquad.http.HttpResponse;
 
 import java.util.function.Function;
 

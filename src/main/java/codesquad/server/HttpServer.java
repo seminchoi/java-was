@@ -1,10 +1,10 @@
 package codesquad.server;
 
 import codesquad.exception.HttpException;
-import codesquad.server.http.HttpRequest;
-import codesquad.server.http.HttpRequestParser;
-import codesquad.server.http.HttpResponse;
-import codesquad.server.router.RequestHandler;
+import codesquad.http.HttpRequest;
+import codesquad.http.HttpRequestParser;
+import codesquad.http.HttpResponse;
+import codesquad.server.handler.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
