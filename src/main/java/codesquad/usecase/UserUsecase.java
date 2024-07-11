@@ -5,12 +5,11 @@ import codesquad.http.DynamicHtml;
 import codesquad.model.User;
 import codesquad.security.Session;
 import codesquad.security.SessionStorage;
+import codesquad.server.file.AppFileReader;
 import codesquad.server.http.Cookie;
 import codesquad.server.http.HttpRequest;
 import codesquad.server.http.HttpResponse;
 import codesquad.server.http.HttpStatus;
-import codesquad.server.router.StaticFilePathManager;
-import codesquad.server.router.StaticFileProcessor;
 import codesquad.server.structure.Params;
 import codesquad.storage.UserStorage;
 
@@ -110,18 +109,18 @@ public class UserUsecase {
             return httpResponse;
         }
 
-        StaticFileProcessor staticFileProcessor = new StaticFileProcessor(new StaticFilePathManager());
-        HttpResponse httpResponse = staticFileProcessor.readFile("/user/user_list.html");
-        String body = httpResponse.getBody();
+        AppFileReader fileReader = new AppFileReader("/static/user/user_list.html");
+
+        String content = fileReader.getContent();
         DynamicHtml dynamicHtml = new DynamicHtml();
         List<User> users = userStorage.findAll();
         dynamicHtml.setArg("users", users);
-        String html = dynamicHtml.process(body);
+        String html = dynamicHtml.process(content);
 
-        HttpResponse newHttpResponse = new HttpResponse(HttpStatus.OK);
-        newHttpResponse.writeBody(html.getBytes());
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
+        httpResponse.writeBody(html.getBytes());
 
-        return newHttpResponse;
+        return httpResponse;
     }
 
     private Session getSession(HttpRequest httpRequest) {

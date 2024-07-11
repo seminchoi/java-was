@@ -1,16 +1,14 @@
 package codesquad.server.router;
 
 import codesquad.exception.HttpException;
+import codesquad.server.file.AppFileReader;
 import codesquad.server.http.ContentType;
 import codesquad.server.http.HttpResponse;
 import codesquad.server.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.jar.JarEntry;
@@ -25,44 +23,37 @@ public class StaticFileProcessor {
     }
 
     public HttpResponse readFile(String path) {
-        byte[] fileBytes = null;
-        String fullPath = path;
+        AppFileReader fileReader = null;
+        String fullPath;
         for (String pathPrefix : staticFilePathManager.getFilePaths()) {
-            try {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-                //TODO: 요청이 /가 아닌데 /로 끝날 때는 /를 땐 곳으로 리다이렉트 시킨다.
-                fullPath = makeFullPath(pathPrefix, path);
-                URL url = classLoader.getResource(fullPath);
+            fullPath = makeFullPath(pathPrefix, path);
+            URL url = classLoader.getResource(fullPath);
+            if (url == null) {
+                continue;
+            }
+
+            if (isDirectory(url, fullPath)) {
+                fullPath = fullPath + "/index.html";
+                url = classLoader.getResource(fullPath);
                 if (url == null) {
                     continue;
                 }
-
-                if (isDirectory(url, fullPath)) {
-                    fullPath = fullPath + "/index.html";
-                    url = classLoader.getResource(fullPath);
-                    if (url == null) {
-                        continue;
-                    }
-                }
-
-                logger.info("found file path {}", fullPath);
-                InputStream inputStream = classLoader.getResourceAsStream(fullPath);
-                if (inputStream != null) {
-                    fileBytes = getBytes(inputStream);
-                }
-            } catch (IOException e) {
-                throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            logger.info("found file path {}", fullPath);
+            fileReader = new AppFileReader(fullPath);
+            break;
         }
 
-        if (fileBytes == null) {
+        if (fileReader == null) {
             return null;
         }
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
-        httpResponse.writeHeader("Content-Type", getContentType(fullPath).getDirective());
-        httpResponse.writeBody(fileBytes);
+        httpResponse.writeHeader("Content-Type", fileReader.getContentType().getDirective());
+        httpResponse.writeBody(fileReader.getBytes());
 
         return httpResponse;
     }
@@ -88,26 +79,5 @@ public class StaticFileProcessor {
             }
         }
         return new File(url.getFile()).isDirectory();
-    }
-
-    public ContentType getContentType(String path) {
-        int extensionIndex = path.lastIndexOf(".");
-        if (extensionIndex < 0) {
-            return ContentType.APPLICATION_OCTET_STREAM;
-        }
-        String extension = path.substring(extensionIndex + 1);
-        return ContentType.fromFileExtension(extension);
-    }
-
-    public byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        byte[] data = new byte[1024];
-        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        buffer.flush();
-        return buffer.toByteArray();
     }
 }
