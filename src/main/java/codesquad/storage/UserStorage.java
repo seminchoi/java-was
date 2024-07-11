@@ -5,6 +5,7 @@ import codesquad.exception.HttpException;
 import codesquad.server.http.HttpStatus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public class UserStorage {
@@ -22,5 +23,9 @@ public class UserStorage {
     public Optional<User> findByUserId(String userId) {
         User user = users.get(userId);
         return Optional.ofNullable(user);
+    }
+
+    public List<User> findAll() {
+        return users.values().stream().toList();
     }
 }

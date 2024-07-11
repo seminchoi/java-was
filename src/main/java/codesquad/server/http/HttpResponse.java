@@ -85,4 +85,9 @@ public class HttpResponse {
     private String makeResponseLine() {
         return httpVersion + " " + httpStatus.getStatusCode() + " " + httpStatus.getStatus();
     }
+
+    //지워야 하는 부분
+    public String getBody() {
+        return new String(body);
+    }
 }
