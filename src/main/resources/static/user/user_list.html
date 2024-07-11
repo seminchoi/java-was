@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../reset.css" rel="stylesheet" />
+    <link href="../global.css" rel="stylesheet" />
+    <title>사용자 목록</title>
+    <style>
+        .table-container {
+            margin: 20px auto;
+            max-width: 800px;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/main"><img src="../img/signiture.svg" /></a>
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
+            </li>
+            <li class="header__menu__item">
+                <a class="btn btn_ghost btn_size_s" href="/logout">로그아웃</a>
+            </li>
+        </ul>
+    </header>
+    <div class="page">
+        <h2 class="page-title">사용자 목록</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>사용자 아이디</th>
+                    <th>사용자 닉네임</th>
+                </tr>
+                </thead>
+                <tbody>
+                {dh:each="user : ${users}"}
+                <tr>
+                    <td>${user.userId}</td>
+                    <td>${user.name}</td>
+                </tr>
+                {end-each}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
