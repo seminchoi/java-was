@@ -15,10 +15,6 @@ public class DynamicHtml {
         arguments.put(key, value);
     }
 
-    private Object getArg(String key) {
-        return arguments.getOrDefault(key, "null");
-    }
-
     public String process(String html) {
         String result = html;
         result = processIfBlocks(result);
@@ -84,14 +80,18 @@ public class DynamicHtml {
             String blockContent = matcher.group(3);
 
             List<?> items = (List<?>) arguments.get(listName);
-            if (items != null) {
-                StringBuilder replacement = new StringBuilder();
-                for (Object item : items) {
-                    String processedBlock = processBlock(blockContent, itemName, item);
-                    replacement.append(processedBlock);
-                }
-                matcher.appendReplacement(builder, Matcher.quoteReplacement(replacement.toString()));
+            if (items == null) {
+                matcher.appendReplacement(builder, "");
+                continue;
             }
+
+            StringBuilder replacement = new StringBuilder();
+            for (Object item : items) {
+                String processedBlock = processBlock(blockContent, itemName, item);
+                replacement.append(processedBlock);
+            }
+            matcher.appendReplacement(builder, Matcher.quoteReplacement(replacement.toString()));
+
         }
         matcher.appendTail(builder);
         return builder.toString();
