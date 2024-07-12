@@ -10,7 +10,19 @@
   <body>
     <div class="container">
       <header class="header">
-        <a href="/"><img src="./img/signiture.svg" /></a>
+      <a href="/"><img src="./img/signiture.svg" /></a>
+      {dh:if="${authenticated}"}
+      <p class="header__user-name">안녕하세요, <span id="logged-in-user">{dh:text="${user.name}"}</span>님</p>
+      <ul class="header__menu">
+        <li class="header__menu__item">
+          <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
+        </li>
+        <li class="header__menu__item">
+          <a class="btn btn_ghost btn_size_s" href="/logout">로그아웃</a>
+        </li>
+      </ul>
+      {end-if}
+      {dh:else}
         <ul class="header__menu">
           <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
@@ -21,6 +33,7 @@
             </a>
           </li>
         </ul>
+      {end-else}
       </header>
       <div class="wrapper">
         <div class="post">
