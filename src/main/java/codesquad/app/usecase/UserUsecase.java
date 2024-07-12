@@ -32,7 +32,8 @@ public class UserUsecase {
         DynamicHtml dynamicHtml = new DynamicHtml();
         dynamicHtml.setArg("authenticated", isAuthenticated);
         if(isAuthenticated) {
-            User user = session.getUser();
+            String userId = session.getIdentity().toString();
+            User user = userStorage.findByUserId(userId).get();
             dynamicHtml.setArg("user", user);
         }
         AppFileReader fileReader = new AppFileReader("static/index.html");
@@ -80,7 +81,7 @@ public class UserUsecase {
             return httpResponse;
         }
 
-        Session session = new Session(user);
+        Session session = new Session(user.getUserId());
         sessionStorage.save(session);
 
         Cookie cookie = new Cookie.Builder("SID", session.getSessionId())

@@ -9,12 +9,12 @@ public class Session {
     private static final long DEFAULT_SESSION_TIMEOUT_MILLIS = 7 * 24 * 60 * 60 * 1000L;
     private final String sessionId;
     private final long createdAt;
-    private final User user;
+    private final Object identity;
 
-    public Session(User user) {
+    public Session(Object identity) {
         this.sessionId = UUID.randomUUID().toString();
         this.createdAt = System.currentTimeMillis();
-        this.user = user;
+        this.identity = identity;
     }
 
     public boolean isExpired() {
@@ -25,8 +25,8 @@ public class Session {
         return sessionId;
     }
 
-    public User getUser() {
-        return user;
+    public Object getIdentity() {
+        return identity;
     }
 
     public long getMaxAge() {
