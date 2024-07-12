@@ -1,6 +1,6 @@
 package codesquad.server.router;
 
-import codesquad.app.config.ObjectContainer;
+import codesquad.app.config.AppContainer;
 import codesquad.http.HttpMethod;
 
 import java.util.ArrayList;
@@ -12,31 +12,31 @@ public class RouteEntryManager {
     public RouteEntryManager() {
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/")
-                        .handler((httpRequest) -> ObjectContainer.userUsecase().home(httpRequest))
+                        .handler((httpRequest) -> AppContainer.userUsecase().home(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
-                        .handler((httpRequest) -> ObjectContainer.userUsecase().register(httpRequest))
+                        .handler((httpRequest) -> AppContainer.userUsecase().register(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/login")
-                        .handler((httpRequest) -> ObjectContainer.userUsecase().login(httpRequest))
+                        .handler((httpRequest) -> AppContainer.userUsecase().login(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
-                        .handler((httpRequest) -> ObjectContainer.userUsecase().logout(httpRequest))
+                        .handler((httpRequest) -> AppContainer.userUsecase().logout(httpRequest))
                         .build()
         );
 
         routeEntry.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
-                        .handler((httpRequest) -> ObjectContainer.userUsecase().userList(httpRequest))
+                        .handler((httpRequest) -> AppContainer.userUsecase().userList(httpRequest))
                         .build()
         );
     }
