@@ -1,11 +1,13 @@
 package codesquad.app.usecase;
 
+import codesquad.app.model.User;
 import codesquad.app.storage.UserStorage;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.security.SessionStorage;
+import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -131,6 +133,36 @@ public class UserUsecaseTest {
 
         assertThat(response).contains("HTTP/1.1 302 Found");
         assertThat(response).contains("Location: /");
+    }
+
+    @Test
+    void 사용자_리스트_페이지_요청_시_로그인_되어있지_않으면_로그인페이지로_리다이렉트_된다() throws URISyntaxException {
+        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/user/list");
+        HttpResponse httpResponse = userUsecase.userList(httpRequest);
+
+        String response = new String(httpResponse.makeResponse());
+
+        assertThat(response).contains("HTTP/1.1 302 Found");
+        assertThat(response).contains("Location: /login");
+    }
+
+    @Test
+    void 사용자_리스트_페이지_요청_시_로그인_되어있으면_회원가입_사용자_목록을_반환한다() throws URISyntaxException {
+        userStorage.saveUser(new User("semin1","semin1","semin1"));
+        userStorage.saveUser(new User("semin2","semin2","semin2"));
+        userStorage.saveUser(new User("semin3","semin3","semin3"));
+        HttpResponse loginResponse = login("semin1", "semin1");
+        String sessionId = getSessionId(loginResponse);
+        Map<String, String> headers = createHeaders(sessionId);
+        HttpResponse httpResponse = userUsecase.userList(
+                HttpRequestUtil.createHttpRequest(HttpMethod.GET, "/user/list", headers)
+        );
+
+        String response = new String(httpResponse.makeResponse());
+
+        assertThat(response).contains("semin1");
+        assertThat(response).contains("semin2");
+        assertThat(response).contains("semin3");
     }
 
     private HttpResponse register() throws URISyntaxException {
