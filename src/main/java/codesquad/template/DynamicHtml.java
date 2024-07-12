@@ -8,8 +8,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DynamicHtml {
-    private Map<String, Object> arguments = new HashMap<>();
+    private static final Pattern IF_BLOCK = Pattern.compile("\\{dh:if=\"\\$\\{(\\w+)\\}\"\\}([\\s\\S]*?)\\{end-if\\}\\s+(?:\\{dh:else\\}([\\s\\S]*?)\\{end-else\\})?");
+    private static final Pattern EACH_BLOCK = Pattern.compile("\\{dh:each=\"(\\w+)\\s*:\\s*\\$\\{(\\w+)\\}\"\\}([\\s\\S]*?)\\{end-each\\}");
+    private static final Pattern TEXT_BLOCK = Pattern.compile("\\{dh:text=\"\\$\\{(\\w+(?:\\.\\w+)?)\\}\"\\}");
 
+
+    private Map<String, Object> arguments = new HashMap<>();
 
     public void setArg(String key, Object value) {
         arguments.put(key, value);
@@ -24,8 +28,7 @@ public class DynamicHtml {
     }
 
     private String processIfBlocks(String html) {
-        Pattern pattern = Pattern.compile("\\{dh:if=\"\\$\\{(\\w+)\\}\"\\}([\\s\\S]*?)\\{end-if\\}\\s+(?:\\{dh:else\\}([\\s\\S]*?)\\{end-else\\})?");
-        Matcher matcher = pattern.matcher(html);
+        Matcher matcher = IF_BLOCK.matcher(html);
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
@@ -50,28 +53,8 @@ public class DynamicHtml {
         return sb.toString();
     }
 
-    private String processTextBlocks(String html) {
-        Pattern pattern = Pattern.compile("\\{dh:text=\"\\$\\{(\\w+(?:\\.\\w+)?)\\}\"\\}");
-        Matcher matcher = pattern.matcher(html);
-        StringBuilder builder = new StringBuilder();
-
-        while (matcher.find()) {
-            String[] content = matcher.group(1).split("\\.");
-            String itemName = content[0];
-            Object item = arguments.get(itemName);
-            String fieldValue = item.toString();
-            if (content.length == 2) {
-                fieldValue = getFieldValue(item, content[1]);
-            }
-            matcher.appendReplacement(builder, fieldValue);
-        }
-        matcher.appendTail(builder);
-        return builder.toString();
-    }
-
     private String processEachBlocks(String html) {
-        Pattern pattern = Pattern.compile("\\{dh:each=\"(\\w+)\\s*:\\s*\\$\\{(\\w+)\\}\"\\}([\\s\\S]*?)\\{end-each\\}");
-        Matcher matcher = pattern.matcher(html);
+        Matcher matcher = EACH_BLOCK.matcher(html);
         StringBuilder builder = new StringBuilder();
 
         while (matcher.find()) {
@@ -98,6 +81,7 @@ public class DynamicHtml {
     }
 
     private String processBlock(String block, String itemName, Object item) {
+        //TODO: 구조 수정
         Pattern pattern = Pattern.compile("\\$\\{" + itemName + "\\.(\\w+)\\}");
         Matcher matcher = pattern.matcher(block);
         StringBuilder builder = new StringBuilder();
@@ -106,6 +90,24 @@ public class DynamicHtml {
             String fieldName = matcher.group(1);
             String fieldValue = getFieldValue(item, fieldName);
             matcher.appendReplacement(builder, Matcher.quoteReplacement(fieldValue));
+        }
+        matcher.appendTail(builder);
+        return builder.toString();
+    }
+
+    private String processTextBlocks(String html) {
+        Matcher matcher = TEXT_BLOCK.matcher(html);
+        StringBuilder builder = new StringBuilder();
+
+        while (matcher.find()) {
+            String[] content = matcher.group(1).split("\\.");
+            String itemName = content[0];
+            Object item = arguments.get(itemName);
+            String fieldValue = item.toString();
+            if (content.length == 2) {
+                fieldValue = getFieldValue(item, content[1]);
+            }
+            matcher.appendReplacement(builder, fieldValue);
         }
         matcher.appendTail(builder);
         return builder.toString();
