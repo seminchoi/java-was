@@ -6,7 +6,6 @@ import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.security.SessionStorage;
-import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static codesquad.util.HttpRequestUtil.createHttpRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -29,6 +29,33 @@ public class UserUsecaseTest {
         userStorage = new UserStorage();
         sessionStorage = new SessionStorage();
         userUsecase = new UserUsecase(userStorage, sessionStorage);
+    }
+
+    @Test
+    void 홈_화면을_요청할때_로그인_되지_않았다면_로그인_버튼이_존재한다() throws URISyntaxException {
+        HttpRequest httpRequest = createHttpRequest("/");
+        HttpResponse httpResponse = userUsecase.home(httpRequest);
+
+        String response = new String(httpResponse.makeResponse());
+
+        assertThat(response).contains("로그인");
+        assertThat(response).doesNotContain("로그아웃");
+    }
+
+    @Test
+    void 홈_화면을_요청할때_로그인_되었다면_사용자_이름과_로그아웃_버튼이_존재한다() throws URISyntaxException {
+        register();
+        HttpResponse loginResponse = login("semin", "1234");
+        String sessionId = getSessionId(loginResponse);
+
+        HttpRequest httpRequest = createHttpRequest(HttpMethod.GET, "/", createHeaders(sessionId));
+        HttpResponse homeResponse = userUsecase.home(httpRequest);
+
+        String response = new String(homeResponse.makeResponse());
+
+        assertThat(response).contains("로그아웃");
+        assertThat(response).contains("semin");
+        assertThat(response).doesNotContain("로그인");
     }
 
     @Test
@@ -74,7 +101,7 @@ public class UserUsecaseTest {
         register();
         HttpResponse httpResponse = login("semin", "1234");
         String sessionId = getSessionId(httpResponse);
-        System.out.println(sessionId);
+
         assertThat(sessionStorage.find(sessionId)).isNotEmpty();
     }
 
@@ -109,7 +136,7 @@ public class UserUsecaseTest {
     private HttpResponse register() throws URISyntaxException {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Length", "37");
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest(HttpMethod.POST, "/user/create", headers);
+        HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/user/create", headers);
         httpRequest.writeBody("userId=semin&name=semin&password=1234");
         return userUsecase.register(httpRequest);
     }
@@ -118,7 +145,7 @@ public class UserUsecaseTest {
         Map<String, String> headers = new HashMap<>();
         String body = "userId=" + id+ "&password=" + password;
         headers.put("Content-Length", String.valueOf(body.length()));
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest(HttpMethod.POST, "/login", headers);
+        HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/login", headers);
         httpRequest.writeBody(body);
         return userUsecase.login(httpRequest);
     }
@@ -142,11 +169,16 @@ public class UserUsecaseTest {
     }
 
     private HttpResponse logout(String sessionId) throws URISyntaxException {
+        Map<String, String> headers = createHeaders(sessionId);
+        HttpRequest httpRequest = createHttpRequest(HttpMethod.GET, "/logout", headers);
+        return userUsecase.logout(httpRequest);
+    }
+
+    private Map<String, String> createHeaders(String sessionId) {
         Map<String, String> headers = new HashMap<>();
         if(sessionId != null) {
             headers.put("Cookie", "SID="+sessionId);
         }
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest(HttpMethod.GET, "/logout", headers);
-        return userUsecase.logout(httpRequest);
+        return headers;
     }
 }
