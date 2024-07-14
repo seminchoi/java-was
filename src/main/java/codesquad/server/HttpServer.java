@@ -27,17 +27,19 @@ public class HttpServer {
 
     public void service() {
         logger.info("Listening for connection on port 8080 ....");
-        executorService.execute(this::startServer);
+        startServer();
     }
 
     private void startServer() {
         while (active) {
-            Socket clientSocket;
             try {
-                clientSocket = serverSocket.accept();
+                if(Thread.currentThread().isInterrupted()) {
+                    break;
+                }
+                Socket clientSocket = serverSocket.accept();
                 executorService.execute(() -> socketHandler.handle(clientSocket));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
             }
         }
     }
