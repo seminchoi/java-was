@@ -29,7 +29,7 @@ public class DynamicHtml {
 
     private String processIfBlocks(String html) {
         Matcher matcher = IF_BLOCK.matcher(html);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
 
         while (matcher.find()) {
             String condition = matcher.group(1);
@@ -47,10 +47,10 @@ public class DynamicHtml {
                 replacement = "";  // else 블록이 없는 경우 빈 문자열로 대체
             }
 
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
+            matcher.appendReplacement(builder, Matcher.quoteReplacement(replacement));
         }
-        matcher.appendTail(sb);
-        return sb.toString();
+        matcher.appendTail(builder);
+        return builder.toString();
     }
 
     private String processEachBlocks(String html) {

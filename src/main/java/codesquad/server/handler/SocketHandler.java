@@ -1,5 +1,6 @@
 package codesquad.server.handler;
 
+import codesquad.container.Component;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpRequestParser;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+@Component
 public class SocketHandler {
     private static final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 

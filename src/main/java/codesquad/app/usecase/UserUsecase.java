@@ -1,5 +1,6 @@
 package codesquad.app.usecase;
 
+import codesquad.container.Component;
 import codesquad.exception.HttpException;
 import codesquad.template.DynamicHtml;
 import codesquad.app.model.User;
@@ -16,6 +17,7 @@ import codesquad.app.storage.UserStorage;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class UserUsecase {
     private final UserStorage userStorage;
     private final SessionStorage sessionStorage;

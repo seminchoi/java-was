@@ -1,5 +1,6 @@
 package codesquad.server.handler;
 
+import codesquad.container.Component;
 import codesquad.file.AppFileReader;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+@Component
 public class StaticFileHandler {
     private final static Logger logger = LoggerFactory.getLogger(StaticFileHandler.class);
     private final StaticFilePathManager staticFilePathManager;

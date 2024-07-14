@@ -1,6 +1,7 @@
 package codesquad.app.storage;
 
 import codesquad.app.model.User;
+import codesquad.container.Component;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpStatus;
 
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class UserStorage {
     private final Map<String, User> users = new ConcurrentHashMap<>();
 

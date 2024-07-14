@@ -1,13 +1,14 @@
 package codesquad.http.security;
 
-import java.util.HashMap;
+import codesquad.container.Component;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class SessionStorage {
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
-
 
     public void save(Session session) {
         sessions.put(session.getSessionId(), session);
