@@ -1,5 +1,6 @@
 package codesquad.server.handler;
 
+import codesquad.container.Component;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
@@ -9,6 +10,7 @@ import codesquad.server.router.RouteEntryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Component
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 

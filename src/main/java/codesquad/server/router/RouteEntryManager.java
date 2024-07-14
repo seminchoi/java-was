@@ -1,11 +1,13 @@
 package codesquad.server.router;
 
 import codesquad.app.config.AppContainer;
+import codesquad.container.Component;
 import codesquad.http.HttpMethod;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class RouteEntryManager {
     private final List<RouteEntry> routeEntry = new ArrayList<>();
 
