@@ -17,7 +17,7 @@ public class HttpConfig {
     }
 
     private void routeEntryConfig(final Container container) {
-        RouteEntryManager routeEntryManager = (RouteEntryManager) container.getComponent("routeEntryConfigurer");
+        RouteEntryManager routeEntryManager = (RouteEntryManager) container.getComponent("routeEntryManager");
 
         UserUsecase userUsecase = (UserUsecase) ContainerHolder.getContainer().getComponent("userUsecase");
 

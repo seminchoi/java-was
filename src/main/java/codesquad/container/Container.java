@@ -47,7 +47,7 @@ public class Container {
             classLoader.loadClass(target);
             processClass(target);
             return;
-        } catch (ClassCastException ignore) {
+        } catch (ClassNotFoundException ignore) {
         }
 
         String path = target.replace(PACKAGE_SEPARATOR, FILE_SEPARATOR);
