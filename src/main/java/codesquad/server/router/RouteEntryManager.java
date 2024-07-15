@@ -1,7 +1,8 @@
 package codesquad.server.router;
 
-import codesquad.app.config.AppContainer;
+import codesquad.app.usecase.UserUsecase;
 import codesquad.container.Component;
+import codesquad.container.ContainerHolder;
 import codesquad.http.HttpMethod;
 
 import java.util.ArrayList;
@@ -9,38 +10,10 @@ import java.util.List;
 
 @Component
 public class RouteEntryManager {
-    private final List<RouteEntry> routeEntry = new ArrayList<>();
+    private final List<RouteEntry> routeEntry;
 
-    public RouteEntryManager() {
-        routeEntry.add(
-                new RouteEntry.Builder().route(HttpMethod.GET, "/")
-                        .handler((httpRequest) -> AppContainer.userUsecase().home(httpRequest))
-                        .build()
-        );
-
-        routeEntry.add(
-                new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
-                        .handler((httpRequest) -> AppContainer.userUsecase().register(httpRequest))
-                        .build()
-        );
-
-        routeEntry.add(
-                new RouteEntry.Builder().route(HttpMethod.POST, "/login")
-                        .handler((httpRequest) -> AppContainer.userUsecase().login(httpRequest))
-                        .build()
-        );
-
-        routeEntry.add(
-                new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
-                        .handler((httpRequest) -> AppContainer.userUsecase().logout(httpRequest))
-                        .build()
-        );
-
-        routeEntry.add(
-                new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
-                        .handler((httpRequest) -> AppContainer.userUsecase().userList(httpRequest))
-                        .build()
-        );
+    public RouteEntryManager(RouteEntryConfigurer routeEntryConfigurer) {
+        routeEntry = routeEntryConfigurer.getRouteEntries();
     }
 
     public List<RouteEntry> getRouteEntry() {
