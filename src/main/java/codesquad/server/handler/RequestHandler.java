@@ -1,10 +1,10 @@
 package codesquad.server.handler;
 
 import codesquad.container.Component;
+import codesquad.exception.HttpException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
-import codesquad.exception.HttpException;
 import codesquad.server.router.RouteEntry;
 import codesquad.server.router.RouteEntryManager;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class RequestHandler {
             return httpResponse;
         }
 
-        for (RouteEntry entry : routeEntryManager.getRouteEntry()) {
+        for (RouteEntry entry : routeEntryManager.getRouteEntries()) {
             if (entry.matches(httpRequest)) {
                 HttpResponse response = entry.getHandler().apply(httpRequest);
                 if (response != null) {

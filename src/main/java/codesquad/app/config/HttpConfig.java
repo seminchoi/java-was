@@ -5,21 +5,23 @@ import codesquad.container.Container;
 import codesquad.container.ContainerHolder;
 import codesquad.http.HttpMethod;
 import codesquad.server.router.RouteEntry;
-import codesquad.server.router.RouteEntryConfigurer;
+import codesquad.server.router.RouteEntryManager;
+import codesquad.server.router.StaticFilePathManager;
 
 public class HttpConfig {
     public void config() {
         final Container container = ContainerHolder.getContainer();
 
         routeEntryConfig(container);
+        staticFilePathConfig(container);
     }
 
     private void routeEntryConfig(final Container container) {
-        RouteEntryConfigurer routeEntryConfigurer = (RouteEntryConfigurer) container.getComponent("routeEntryConfigurer");
+        RouteEntryManager routeEntryManager = (RouteEntryManager) container.getComponent("routeEntryConfigurer");
 
         UserUsecase userUsecase = (UserUsecase) ContainerHolder.getContainer().getComponent("userUsecase");
 
-        routeEntryConfigurer.add(
+        routeEntryManager.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/")
                         .handler(userUsecase::home)
                         .build()
@@ -40,5 +42,11 @@ public class HttpConfig {
                         .handler(userUsecase::userList)
                         .build()
         );
+    }
+
+    private void staticFilePathConfig(final Container container) {
+        StaticFilePathManager staticFilePathManager = (StaticFilePathManager) container.getComponent("staticFilePathManager");
+
+        staticFilePathManager.addPath("static");
     }
 }
