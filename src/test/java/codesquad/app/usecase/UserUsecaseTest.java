@@ -7,6 +7,7 @@ import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.security.SessionStorage;
+import codesquad.template.DynamicHtml;
 import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,8 @@ public class UserUsecaseTest {
     @Test
     void 홈_화면을_요청할때_로그인_되지_않았다면_로그인_버튼이_존재한다() throws URISyntaxException {
         HttpRequest httpRequest = createHttpRequest("/");
-        HttpResponse httpResponse = userUsecase.home(httpRequest);
+        DynamicHtml dynamicHtml = (DynamicHtml) userUsecase.home(httpRequest);
+        HttpResponse httpResponse = dynamicHtml.process();
 
         String response = new String(httpResponse.makeResponse());
 
@@ -51,7 +53,8 @@ public class UserUsecaseTest {
         String sessionId = getSessionId(loginResponse);
 
         HttpRequest httpRequest = createHttpRequest(HttpMethod.GET, "/", createHeaders(sessionId));
-        HttpResponse homeResponse = userUsecase.home(httpRequest);
+        DynamicHtml dynamicHtml = (DynamicHtml) userUsecase.home(httpRequest);
+        HttpResponse homeResponse = dynamicHtml.process();
 
         String response = new String(homeResponse.makeResponse());
 
@@ -138,7 +141,7 @@ public class UserUsecaseTest {
     @Test
     void 사용자_리스트_페이지_요청_시_로그인_되어있지_않으면_로그인페이지로_리다이렉트_된다() throws URISyntaxException {
         HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/user/list");
-        HttpResponse httpResponse = userUsecase.userList(httpRequest);
+        HttpResponse httpResponse = (HttpResponse) userUsecase.userList(httpRequest);
 
         String response = new String(httpResponse.makeResponse());
 
@@ -154,10 +157,11 @@ public class UserUsecaseTest {
         HttpResponse loginResponse = login("semin1", "semin1");
         String sessionId = getSessionId(loginResponse);
         Map<String, String> headers = createHeaders(sessionId);
-        HttpResponse httpResponse = userUsecase.userList(
+        DynamicHtml dynamicHtml = (DynamicHtml) userUsecase.userList(
                 HttpRequestUtil.createHttpRequest(HttpMethod.GET, "/user/list", headers)
         );
 
+        HttpResponse httpResponse = dynamicHtml.process();
         String response = new String(httpResponse.makeResponse());
 
         assertThat(response).contains("semin1");
