@@ -7,6 +7,7 @@ import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
 import codesquad.server.router.RouteEntry;
 import codesquad.server.router.RouteEntryManager;
+import codesquad.template.DynamicHtml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,16 +30,24 @@ public class RequestHandler {
             return httpResponse;
         }
 
+        HttpResponse httpResponse = null;
+
         for (RouteEntry entry : routeEntryManager.getRouteEntries()) {
             if (entry.matches(httpRequest)) {
-                HttpResponse response = entry.getHandler().apply(httpRequest);
-                if (response != null) {
-                    return response;
+                Object response = entry.getHandler().apply(httpRequest);
+                if(response instanceof DynamicHtml dynamicHtml) {
+                    httpResponse = dynamicHtml.process();
+                }
+                if(response instanceof HttpResponse) {
+                    httpResponse = (HttpResponse) response;
+                }
+                if (httpResponse != null) {
+                    return httpResponse;
                 }
             }
         }
 
-        HttpResponse httpResponse = staticFileHandler.handle(httpRequest.getPath());
+        httpResponse = staticFileHandler.handle(httpRequest.getPath());
         if (httpResponse != null) {
             return httpResponse;
         }

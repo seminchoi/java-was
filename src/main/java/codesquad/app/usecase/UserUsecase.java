@@ -27,25 +27,19 @@ public class UserUsecase {
         this.sessionStorage = sessionStorage;
     }
 
-    public HttpResponse home(HttpRequest httpRequest) {
+    public DynamicHtml home(HttpRequest httpRequest) {
         Session session = getSession(httpRequest);
 
         boolean isAuthenticated = session != null && !session.isExpired();
         DynamicHtml dynamicHtml = new DynamicHtml();
         dynamicHtml.setArg("authenticated", isAuthenticated);
-        if(isAuthenticated) {
+        if (isAuthenticated) {
             String userId = session.getIdentity().toString();
             User user = userStorage.findByUserId(userId).get();
             dynamicHtml.setArg("user", user);
         }
-        AppFileReader fileReader = new AppFileReader("static/index.html");
-        String content = fileReader.getContent();
-        String processed = dynamicHtml.process(content);
-
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
-        httpResponse.writeBody(processed.getBytes());
-
-        return httpResponse;
+        dynamicHtml.setTemplate("/index.html");
+        return dynamicHtml;
     }
 
     public HttpResponse register(HttpRequest httpRequest) {
@@ -112,7 +106,7 @@ public class UserUsecase {
     public HttpResponse logout(HttpRequest httpRequest) {
         Session session = getSession(httpRequest);
 
-        if(session == null) {
+        if (session == null) {
             throw new HttpException(HttpStatus.UNAUTHORIZED);
         }
 
@@ -123,27 +117,21 @@ public class UserUsecase {
         return httpResponse;
     }
 
-    public HttpResponse userList(HttpRequest httpRequest) {
+    public Object userList(HttpRequest httpRequest) {
         Session session = getSession(httpRequest);
-        if(session == null || session.isExpired()) {
+        if (session == null || session.isExpired()) {
             HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
             httpResponse.writeHeader("Location", "/login");
 
             return httpResponse;
         }
 
-        AppFileReader fileReader = new AppFileReader("static/user/user_list.html");
-        String content = fileReader.getContent();
-
         DynamicHtml dynamicHtml = new DynamicHtml();
+        dynamicHtml.setTemplate("/user/user_list.html");
         List<User> users = userStorage.findAll();
         dynamicHtml.setArg("users", users);
-        String html = dynamicHtml.process(content);
 
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
-        httpResponse.writeBody(html.getBytes());
-
-        return httpResponse;
+        return dynamicHtml;
     }
 
     private Session getSession(HttpRequest httpRequest) {

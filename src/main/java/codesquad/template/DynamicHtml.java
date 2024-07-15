@@ -1,5 +1,12 @@
 package codesquad.template;
 
+import codesquad.exception.HttpException;
+import codesquad.file.AppFileReader;
+import codesquad.http.HttpResponse;
+import codesquad.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
@@ -8,23 +15,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DynamicHtml {
+    private static final Logger logger = LoggerFactory.getLogger(DynamicHtml.class);
+
     private static final Pattern IF_BLOCK = Pattern.compile("\\{dh:if=\"\\$\\{(\\w+)\\}\"\\}([\\s\\S]*?)\\{end-if\\}\\s+(?:\\{dh:else\\}([\\s\\S]*?)\\{end-else\\})?");
     private static final Pattern EACH_BLOCK = Pattern.compile("\\{dh:each=\"(\\w+)\\s*:\\s*\\$\\{(\\w+)\\}\"\\}([\\s\\S]*?)\\{end-each\\}");
     private static final Pattern TEXT_BLOCK = Pattern.compile("\\{dh:text=\"\\$\\{(\\w+(?:\\.\\w+)?)\\}\"\\}");
 
+    private String templatePathPrefix = "templates";
 
     private Map<String, Object> arguments = new HashMap<>();
+    private String templateName;
 
     public void setArg(String key, Object value) {
         arguments.put(key, value);
     }
 
-    public String process(String html) {
-        String result = html;
-        result = processIfBlocks(result);
-        result = processEachBlocks(result);
-        result = processTextBlocks(result);
-        return result;
+    public HttpResponse process() {
+        AppFileReader fileReader = new AppFileReader(templatePathPrefix + templateName);
+        String content = fileReader.getContent();
+
+        content = processIfBlocks(content);
+        content = processEachBlocks(content);
+        content = processTextBlocks(content);
+
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
+        httpResponse.writeBody(content.getBytes());
+
+        return httpResponse;
     }
 
     private String processIfBlocks(String html) {
@@ -120,8 +137,12 @@ public class DynamicHtml {
             Object value = field.get(obj);
             return value != null ? value.toString() : "";
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            return "";
+            logger.error(e.getMessage(), e);
+            throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public void setTemplate(String templateName) {
+        this.templateName = templateName;
     }
 }
