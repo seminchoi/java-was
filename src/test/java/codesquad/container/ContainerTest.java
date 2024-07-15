@@ -39,12 +39,12 @@ public class ContainerTest {
     static ContainerConfigurer createContainerConfigurer(List<String> targetPackages) {
         return new ContainerConfigurer() {
             @Override
-            public List<String> getTargetPackages() {
+            public List<String> getTargets() {
                 return targetPackages;
             }
 
             @Override
-            public void addTargetPackages(String... targetPackages) {
+            public void addTargets(String... targets) {
 
             }
         };

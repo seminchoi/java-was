@@ -19,40 +19,46 @@ public class Container {
     private static final String FILE_SEPARATOR = File.separator;
     
     private final Map<String, Object> container = new HashMap<>();
-    private final List<String> targetPackages = new ArrayList<>();
+    private final List<String> targets = new ArrayList<>();
     private final List<Class<?>> componentsToInitialize = new ArrayList<>();
 
     public Container(ContainerConfigurer containerConfigurer) {
-        targetPackages.addAll(containerConfigurer.getTargetPackages());
+        targets.addAll(containerConfigurer.getTargets());
     }
 
     public void init() {
-        // 1단계: 컴포넌트 스캔
-        for (String targetPackage : targetPackages) {
+        for (String targetPackage : targets) {
             try {
-                scanPackage(targetPackage);
+                scanTarget(targetPackage);
             } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException("Failed to scan package: " + targetPackage, e);
             }
         }
 
-        // 2단계: 실제 인스턴스 생성
         for (Class<?> component : componentsToInitialize) {
             createInstance(component, new ArrayList<>());
         }
     }
 
-    private void scanPackage(String packageName) throws IOException, ClassNotFoundException {
+    private void scanTarget(String target) throws IOException, ClassNotFoundException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        String path = packageName.replace(PACKAGE_SEPARATOR, FILE_SEPARATOR);
+
+        try {
+            classLoader.loadClass(target);
+            processClass(target);
+            return;
+        } catch (ClassCastException ignore) {
+        }
+
+        String path = target.replace(PACKAGE_SEPARATOR, FILE_SEPARATOR);
         Enumeration<URL> resources = classLoader.getResources(path);
 
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             if (resource.getProtocol().equals("file")) {
-                scanDirectory(new File(resource.getFile()), packageName);
+                scanDirectory(new File(resource.getFile()), target);
             } else if (resource.getProtocol().equals("jar")) {
-                scanJar(resource, packageName);
+                scanJar(resource, target);
             }
         }
     }

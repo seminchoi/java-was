@@ -3,7 +3,7 @@ package codesquad.container;
 import java.util.List;
 
 public interface ContainerConfigurer {
-    List<String> getTargetPackages();
+    List<String> getTargets();
 
-    void addTargetPackages(String... targetPackages);
+    void addTargets(String... targets);
 }

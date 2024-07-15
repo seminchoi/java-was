@@ -25,12 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RequestHandlerTest {
     private static ContainerConfigurer containerConfigurer = new ContainerConfigurer() {
         @Override
-        public List<String> getTargetPackages() {
-            return List.of("codesquad.server");
+        public List<String> getTargets() {
+            return List.of("codesquad.server.handler.RequestHandler",
+                    "codesquad.server.handler.StaticFileHandler",
+                    "codesquad.server.router.RouteEntryManager",
+                    "codesquad.server.router.StaticFilePathManager"
+            );
         }
 
         @Override
-        public void addTargetPackages(String... targetPackages) {
+        public void addTargets(String... targets) {
         }
     };
 

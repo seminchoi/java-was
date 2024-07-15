@@ -14,12 +14,12 @@ public class WebContainerConfigurer implements ContainerConfigurer {
     }
 
     @Override
-    public List<String> getTargetPackages() {
+    public List<String> getTargets() {
         return targetPackages;
     }
 
     @Override
-    public void addTargetPackages(String... targetPackages) {
-        this.targetPackages.addAll(Arrays.asList(targetPackages));
+    public void addTargets(String... targets) {
+        this.targetPackages.addAll(Arrays.asList(targets));
     }
 }
