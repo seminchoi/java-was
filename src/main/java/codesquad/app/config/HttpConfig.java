@@ -24,26 +24,34 @@ public class HttpConfig {
         PostUsecase postUsecase = (PostUsecase) ContainerHolder.getContainer().getComponent("postUsecase");
 
         routeEntryManager.add(
-                new RouteEntry.Builder().route(HttpMethod.GET, "/")
-                        .handler(postUsecase::getPostList)
-                        .build()
-        ).add(
-                new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
-                        .handler(userUsecase::register)
-                        .build()
-        ).add(
-                new RouteEntry.Builder().route(HttpMethod.POST, "/login")
-                        .handler(userUsecase::login)
-                        .build()
-        ).add(
-                new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
-                        .handler(userUsecase::logout)
-                        .build()
-        ).add(
-                new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
-                        .handler(userUsecase::userList)
-                        .build()
-        );
+                        new RouteEntry.Builder().route(HttpMethod.GET, "/")
+                                .handler(postUsecase::getPostList)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.POST, "/post/create")
+                                .handler(postUsecase::createPost)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.GET, "/post/{postId}")
+                                .handler(postUsecase::getPostDetail)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
+                                .handler(userUsecase::register)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.POST, "/login")
+                                .handler(userUsecase::login)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
+                                .handler(userUsecase::logout)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
+                                .handler(userUsecase::userList)
+                                .build()
+                );
     }
 
     private void staticFilePathConfig(final Container container) {
