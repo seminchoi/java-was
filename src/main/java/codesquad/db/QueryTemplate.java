@@ -1,5 +1,6 @@
 package codesquad.db;
 
+import codesquad.exception.DbConstraintException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,12 @@ public class QueryTemplate {
                 preparedStatement.setObject(i, values[i - 1]);
             }
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSetMapper.map(resultSet);
+            if (resultSet.next()) {
+                return resultSetMapper.map(resultSet);
+            }
+            return null;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DbConstraintException();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -45,30 +50,11 @@ public class QueryTemplate {
             } else {
                 return null;
             }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DbConstraintException();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T mapResultSet(ResultSet resultSet, Class<T> requiredType) throws SQLException {
-        if (requiredType == Long.class) {
-            return (T) Long.valueOf(resultSet.getLong(1));
-        } else if (requiredType == Integer.class) {
-            return (T) Integer.valueOf(resultSet.getInt(1));
-        } else if (requiredType == String.class) {
-            return (T) resultSet.getString(1);
-        } else if (requiredType == Double.class) {
-            return (T) Double.valueOf(resultSet.getDouble(1));
-        } else if (requiredType == Float.class) {
-            return (T) Float.valueOf(resultSet.getFloat(1));
-        } else if (requiredType == Boolean.class) {
-            return (T) Boolean.valueOf(resultSet.getBoolean(1));
-        } else if (requiredType == Date.class) {
-            return (T) resultSet.getDate(1);
-        } else {
-            throw new IllegalArgumentException("Unsupported type: " + requiredType.getName());
         }
     }
 
@@ -86,6 +72,8 @@ public class QueryTemplate {
             }
             logger.debug("executeQuery: {}", sql);
             return results;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DbConstraintException();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -96,14 +84,13 @@ public class QueryTemplate {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            logger.debug("executeQuery: {}", sql);
-
             for (int i = 1; i <= values.length; i++) {
                 preparedStatement.setObject(i, values[i - 1]);
             }
 
-            logger.debug("executeQuery: {}", sql);
             preparedStatement.executeUpdate();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DbConstraintException();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
