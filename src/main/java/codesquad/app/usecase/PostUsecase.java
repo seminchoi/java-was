@@ -94,6 +94,14 @@ public class PostUsecase {
         List<Comment> comments = commentDao.findByPostId(post.getId());
         dynamicHtml.setArg("comments", comments);
 
+        Long previous = postDao.findPrevious(post.getId());
+        dynamicHtml.setArg("previousExist", previous != null);
+        dynamicHtml.setArg("previous", previous);
+
+        Long next = postDao.findNext(post.getId());
+        dynamicHtml.setArg("nextExist", next != null);
+        dynamicHtml.setArg("next", next);
+
         return dynamicHtml;
     }
 }

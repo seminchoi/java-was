@@ -99,8 +99,9 @@
         </ul>
         <nav class="nav">
             <ul class="nav__menu">
-                <li class="nav__menu__item">
-                    <a class="nav__menu__item__btn" href="">
+                {dh:if="${previousExist}"}
+                <li class="nav__menu__item nav__menu__item--previous">
+                    <a class="nav__menu__item__btn " href="/post/{dh:text="${previous}"}">
                         <img
                                 class="nav__menu__item__img"
                                 src="../img/ci_chevron-left.svg"
@@ -108,8 +109,10 @@
                         이전 글
                     </a>
                 </li>
-                <li class="nav__menu__item">
-                    <a class="nav__menu__item__btn" href="">
+                {end-if}
+                {dh:if="${nextExist}"}
+                <li class="nav__menu__item nav__menu__item--next">
+                    <a class="nav__menu__item__btn" href="/post/{dh:text="${next}"}">
                         다음 글
                         <img
                                 class="nav__menu__item__img"
@@ -117,6 +120,7 @@
                         />
                     </a>
                 </li>
+                {end-if}
             </ul>
         </nav>
     </div>

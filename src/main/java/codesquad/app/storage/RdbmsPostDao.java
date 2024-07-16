@@ -43,4 +43,24 @@ public class RdbmsPostDao implements PostDao {
         final String sql = "SELECT * FROM posts";
         return queryTemplate.query(sql, postRowMapper);
     }
+
+    @Override
+    public Long findPrevious(Long postId) {
+        String sql = "SELECT id FROM posts WHERE id < ? LIMIT 1";
+        Object previous =  queryTemplate.queryForObject(sql, postId);
+        if (previous == null) {
+            return null;
+        }
+        return (Long) previous;
+    }
+
+    @Override
+    public Long findNext(Long postId) {
+        String sql = "SELECT id FROM posts WHERE id > ? LIMIT 1";
+        Object next =  queryTemplate.queryForObject(sql, postId);
+        if (next == null) {
+            return null;
+        }
+        return (Long) next;
+    }
 }

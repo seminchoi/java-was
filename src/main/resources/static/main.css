@@ -81,6 +81,7 @@
 .comment {
   display: flex;
   flex-direction: column;
+  padding: 12px;
   gap: 24px;
 }
 
@@ -130,21 +131,33 @@
 
 .nav__menu {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 이전 글과 다음 글 사이의 공간을 최대화 */
   align-items: center;
+  padding: 0; /* ul의 기본 패딩 제거 */
+  margin: 0; /* ul의 기본 마진 제거 */
+  list-style-type: none; /* ul의 기본 리스트 스타일 제거 */
 }
 
 .nav__menu__item {
+  flex: 1; /* 각 아이템이 동일한 너비를 가지도록 설정 */
 }
 
 .nav__menu__item__btn {
-  display: flex;
-  justify-content: space-between;
+  display: inline-flex;
   align-items: center;
   padding: 8px 16px;
   gap: 8px;
   text-decoration: none;
   color: #14212b;
+  width: 96%; /* 버튼이 아이템의 전체 너비를 차지하도록 설정 */
+}
+
+.nav__menu__item--previous .nav__menu__item__btn {
+  justify-content: flex-start; /* 이전 글 버튼 내용을 왼쪽으로 정렬 */
+}
+
+.nav__menu__item--next .nav__menu__item__btn {
+  justify-content: flex-end; /* 다음 글 버튼 내용을 오른쪽으로 정렬 */
 }
 
 .nav__menu__item__img {
