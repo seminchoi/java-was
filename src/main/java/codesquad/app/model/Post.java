@@ -13,10 +13,10 @@ public class Post {
         this.authorId = authorId;
     }
 
-    public Post(String content, String authorId, String title) {
+    public Post(String title, String content, String authorId) {
+        this.title = title;
         this.content = content;
         this.authorId = authorId;
-        this.title = title;
     }
 
     public Long getId() {
