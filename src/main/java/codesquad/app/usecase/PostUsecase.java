@@ -4,6 +4,7 @@ import codesquad.app.model.Post;
 import codesquad.app.model.User;
 import codesquad.app.service.SessionService;
 import codesquad.app.storage.PostDao;
+import codesquad.app.storage.UserDao;
 import codesquad.container.Component;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpRequest;
@@ -23,10 +24,12 @@ public class PostUsecase {
 
     private final SessionService sessionService;
     private final PostDao postDao;
+    private final UserDao userDao;
 
-    public PostUsecase(SessionService sessionService, PostDao postDao) {
+    public PostUsecase(SessionService sessionService, PostDao postDao, UserDao userDao) {
         this.sessionService = sessionService;
         this.postDao = postDao;
+        this.userDao = userDao;
     }
 
     public DynamicHtml getPostList(HttpRequest httpRequest) {
@@ -79,6 +82,9 @@ public class PostUsecase {
         DynamicHtml dynamicHtml = new DynamicHtml();
         dynamicHtml.setTemplate("/post/post_detail.html");
         dynamicHtml.setArg("post", post);
+
+        User user = userDao.findById(post.getAuthorId()).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
+        dynamicHtml.setArg("user", user);
 
         return dynamicHtml;
     }
