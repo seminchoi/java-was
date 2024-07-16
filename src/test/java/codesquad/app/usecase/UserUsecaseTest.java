@@ -34,35 +34,6 @@ public class UserUsecaseTest {
         userUsecase = new UserUsecase(userStorage, sessionStorage);
     }
 
-//    @Test
-//    void 홈_화면을_요청할때_로그인_되지_않았다면_로그인_버튼이_존재한다() throws URISyntaxException {
-//        HttpRequest httpRequest = createHttpRequest("/");
-//        DynamicHtml dynamicHtml = (DynamicHtml) userUsecase.home(httpRequest);
-//        HttpResponse httpResponse = dynamicHtml.process();
-//
-//        String response = new String(httpResponse.makeResponse());
-//
-//        assertThat(response).contains("로그인");
-//        assertThat(response).doesNotContain("로그아웃");
-//    }
-//
-//    @Test
-//    void 홈_화면을_요청할때_로그인_되었다면_사용자_이름과_로그아웃_버튼이_존재한다() throws URISyntaxException {
-//        register();
-//        HttpResponse loginResponse = login("semin", "1234");
-//        String sessionId = getSessionId(loginResponse);
-//
-//        HttpRequest httpRequest = createHttpRequest(HttpMethod.GET, "/", createHeaders(sessionId));
-//        DynamicHtml dynamicHtml = (DynamicHtml) userUsecase.home(httpRequest);
-//        HttpResponse homeResponse = dynamicHtml.process();
-//
-//        String response = new String(homeResponse.makeResponse());
-//
-//        assertThat(response).contains("로그아웃");
-//        assertThat(response).contains("semin");
-//        assertThat(response).doesNotContain("로그인");
-//    }
-
     @Test
     void 회원가입이_성공하면_로그인페이지로_리다이렉트_지시한다() throws URISyntaxException {
         String response = new String(register().makeResponse());
