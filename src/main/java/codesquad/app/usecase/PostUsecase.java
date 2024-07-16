@@ -14,9 +14,13 @@ import codesquad.http.structure.Params;
 import codesquad.template.DynamicHtml;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class PostUsecase {
+    private final Pattern POST_URL_PATTERN = Pattern.compile("/post/(\\d+)");
+
     private final SessionService sessionService;
     private final PostDao postDao;
 
@@ -53,12 +57,29 @@ public class PostUsecase {
 
         Post post = new Post(
                 params.get("title"),
-                params.get("contnent"),
+                params.get("content"),
                 user.getUserId()
         );
 
         postDao.save(post);
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
+        httpResponse.writeHeader("Location", "/");
+        return httpResponse;
+    }
 
-        return new HttpResponse(HttpStatus.CREATED);
+    public DynamicHtml getPostDetail(HttpRequest httpRequest) {
+        String path = httpRequest.getPath();
+        Matcher matcher = POST_URL_PATTERN.matcher(path);
+        matcher.find();
+        String group = matcher.group(1);
+
+        Post post = postDao.findById(Long.parseLong(group)).orElseThrow(() ->
+                new HttpException(HttpStatus.NOT_FOUND)
+        );
+        DynamicHtml dynamicHtml = new DynamicHtml();
+        dynamicHtml.setTemplate("/post/post_detail.html");
+        dynamicHtml.setArg("post", post);
+
+        return dynamicHtml;
     }
 }
