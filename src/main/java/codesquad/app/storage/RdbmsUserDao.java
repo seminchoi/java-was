@@ -14,8 +14,8 @@ import java.util.Optional;
 public class RdbmsUserDao implements UserDao {
     private static final ResultSetMapper<User> USER_ROW_MAPPER = (resultSet) -> new User(
             resultSet.getString("user_id"),
-            resultSet.getString("name"),
-            resultSet.getString("password")
+            resultSet.getString("password"),
+            resultSet.getString("name")
     );
 
     private final QueryTemplate queryTemplate;
