@@ -25,17 +25,15 @@ public class H2ConnectionPoolManager implements ConnectionPoolManager {
 
     private void init(DataSourceConfigurer dataSourceConfigurer) {
         QueryTemplate queryTemplate = new QueryTemplate(jdbcConnectionPool);
-        AppFileReader dropReader = new AppFileReader(DROP_SQL_FILE_PATH);
-        AppFileReader createReader = new AppFileReader(CREATE_SQL_FILE_PATH);
+        AppFileReader dropSql = new AppFileReader(DROP_SQL_FILE_PATH);
+        AppFileReader createSql = new AppFileReader(CREATE_SQL_FILE_PATH);
 
         switch (dataSourceConfigurer.ddlOption()) {
             case DROP_CREATE -> {
-                queryTemplate.execute(dropReader.getContent());
-                queryTemplate.execute(createReader.getContent());
+                queryTemplate.execute(dropSql.getContent());
+                queryTemplate.execute(createSql.getContent());
             }
-            case CREATE -> {
-                queryTemplate.execute(createReader.getContent());
-            }
+            case CREATE -> queryTemplate.execute(createSql.getContent());
         }
     }
 
