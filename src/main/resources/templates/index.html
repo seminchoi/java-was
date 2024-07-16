@@ -37,22 +37,19 @@
         {end-else}
     </header>
 
-    <div class="wrapper">
-        <h1 class="page-title">게시글 목록</h1>
-        <ul class="post-list">
-            {dh:each="post : ${posts}"}
-            <li class="post-list__item">
-                <a href="/post/${post.id}" class="post-list__link">
+    <h1 class="page-title">게시글 목록</h1>
+    <ul class="post-list">
+        {dh:each="post : ${posts}"}
+        <li class="post-list__item">
+            <a href="/post/${post.id}" class="post-list__link">
                 <div class="post-list__author">
-                    <img src="${post.authorAvatar}" alt="작성자 아바타" class="post-list__author-avatar">
-                    <span class="post-list__author-name">${post.authorName}</span>
+                    <span class="post-list__author-name">${post.authorId}</span>
                 </div>
                 <h2 class="post-list__title">${post.title}</h2>
-                </a>
-            </li>
-            {end-each}
-        </ul>
-    </div>
+            </a>
+        </li>
+        {end-each}
+    </ul>
 </div>
 </body>
 </html>
