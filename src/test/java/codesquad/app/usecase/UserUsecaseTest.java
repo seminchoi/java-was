@@ -1,7 +1,7 @@
 package codesquad.app.usecase;
 
 import codesquad.app.model.User;
-import codesquad.app.storage.UserStorage;
+import codesquad.app.storage.InMemoryUserDao;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
@@ -23,13 +23,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserUsecaseTest {
     private UserUsecase userUsecase;
-    private UserStorage userStorage;
+    private InMemoryUserDao userStorage;
     private SessionStorage sessionStorage;
 
 
     @BeforeEach
     void setUp() {
-        userStorage = new UserStorage();
+        userStorage = new InMemoryUserDao();
         sessionStorage = new SessionStorage();
         userUsecase = new UserUsecase(userStorage, sessionStorage);
     }
@@ -151,9 +151,9 @@ public class UserUsecaseTest {
 
     @Test
     void 사용자_리스트_페이지_요청_시_로그인_되어있으면_회원가입_사용자_목록을_반환한다() throws URISyntaxException {
-        userStorage.saveUser(new User("semin1","semin1","semin1"));
-        userStorage.saveUser(new User("semin2","semin2","semin2"));
-        userStorage.saveUser(new User("semin3","semin3","semin3"));
+        userStorage.save(new User("semin1","semin1","semin1"));
+        userStorage.save(new User("semin2","semin2","semin2"));
+        userStorage.save(new User("semin3","semin3","semin3"));
         HttpResponse loginResponse = login("semin1", "semin1");
         String sessionId = getSessionId(loginResponse);
         Map<String, String> headers = createHeaders(sessionId);

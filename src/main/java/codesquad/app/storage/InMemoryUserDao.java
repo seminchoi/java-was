@@ -11,10 +11,10 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class UserStorage {
+public class InMemoryUserDao implements UserDao {
     private final Map<String, User> users = new ConcurrentHashMap<>();
 
-    public void saveUser(User user) {
+    public void save(User user) {
         users.compute(user.getUserId(), (userId, curUser) -> {
             if (curUser != null) {
                 throw new HttpException(HttpStatus.CONFLICT);
@@ -23,7 +23,7 @@ public class UserStorage {
         });
     }
 
-    public Optional<User> findByUserId(String userId) {
+    public Optional<User> findById(String userId) {
         User user = users.get(userId);
         return Optional.ofNullable(user);
     }

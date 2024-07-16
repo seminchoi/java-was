@@ -1,29 +1,28 @@
 package codesquad.app.usecase;
 
+import codesquad.app.model.User;
+import codesquad.app.storage.UserDao;
 import codesquad.container.Component;
 import codesquad.exception.HttpException;
-import codesquad.template.DynamicHtml;
-import codesquad.app.model.User;
-import codesquad.http.security.Session;
-import codesquad.http.security.SessionStorage;
-import codesquad.file.AppFileReader;
 import codesquad.http.Cookie;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
+import codesquad.http.security.Session;
+import codesquad.http.security.SessionStorage;
 import codesquad.http.structure.Params;
-import codesquad.app.storage.UserStorage;
+import codesquad.template.DynamicHtml;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class UserUsecase {
-    private final UserStorage userStorage;
+    private final UserDao userDao;
     private final SessionStorage sessionStorage;
 
-    public UserUsecase(UserStorage userStorage, SessionStorage sessionStorage) {
-        this.userStorage = userStorage;
+    public UserUsecase(UserDao userDao, SessionStorage sessionStorage) {
+        this.userDao = userDao;
         this.sessionStorage = sessionStorage;
     }
 
@@ -35,7 +34,7 @@ public class UserUsecase {
         dynamicHtml.setArg("authenticated", isAuthenticated);
         if (isAuthenticated) {
             String userId = session.getIdentity().toString();
-            User user = userStorage.findByUserId(userId).get();
+            User user = userDao.findById(userId).get();
             dynamicHtml.setArg("user", user);
         }
         dynamicHtml.setTemplate("/index.html");
@@ -53,7 +52,7 @@ public class UserUsecase {
 
         User user = new User(userId, password, name);
 
-        userStorage.saveUser(user);
+        userDao.save(user);
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
         httpResponse.writeHeader("Location", "/");
@@ -91,7 +90,7 @@ public class UserUsecase {
     }
 
     private User authenticate(String userId, String password) {
-        Optional<User> optionalUser = userStorage.findByUserId(userId);
+        Optional<User> optionalUser = userDao.findById(userId);
         if (optionalUser.isEmpty()) {
             return null;
         }
@@ -128,7 +127,7 @@ public class UserUsecase {
 
         DynamicHtml dynamicHtml = new DynamicHtml();
         dynamicHtml.setTemplate("/user/user_list.html");
-        List<User> users = userStorage.findAll();
+        List<User> users = userDao.findAll();
         dynamicHtml.setArg("users", users);
 
         return dynamicHtml;
