@@ -1,8 +1,10 @@
 package codesquad.app.usecase;
 
+import codesquad.app.model.Comment;
 import codesquad.app.model.Post;
 import codesquad.app.model.User;
 import codesquad.app.service.SessionService;
+import codesquad.app.storage.CommentDao;
 import codesquad.app.storage.PostDao;
 import codesquad.app.storage.UserDao;
 import codesquad.container.Component;
@@ -24,11 +26,14 @@ public class PostUsecase {
 
     private final SessionService sessionService;
     private final PostDao postDao;
+    private final CommentDao commentDao;
     private final UserDao userDao;
 
-    public PostUsecase(SessionService sessionService, PostDao postDao, UserDao userDao) {
+
+    public PostUsecase(SessionService sessionService, PostDao postDao, CommentDao commentDao, UserDao userDao) {
         this.sessionService = sessionService;
         this.postDao = postDao;
+        this.commentDao = commentDao;
         this.userDao = userDao;
     }
 
@@ -85,6 +90,9 @@ public class PostUsecase {
 
         User user = userDao.findById(post.getAuthorId()).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
         dynamicHtml.setArg("user", user);
+
+        List<Comment> comments = commentDao.findByPostId(post.getId());
+        dynamicHtml.setArg("comments", comments);
 
         return dynamicHtml;
     }
