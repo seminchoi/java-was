@@ -1,6 +1,7 @@
 package codesquad.app.storage;
 
 import codesquad.app.model.Post;
+import codesquad.container.Component;
 import codesquad.db.ConnectionPoolManager;
 import codesquad.db.QueryTemplate;
 import codesquad.db.ResultSetMapper;
@@ -8,6 +9,7 @@ import codesquad.db.ResultSetMapper;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class RdbmsPostDao implements PostDao {
     private static final ResultSetMapper<Post> postRowMapper = (resultSet) -> new Post(
             resultSet.getLong("id"),

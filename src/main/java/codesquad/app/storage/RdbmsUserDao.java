@@ -1,15 +1,16 @@
 package codesquad.app.storage;
 
 import codesquad.app.model.User;
+import codesquad.container.Component;
 import codesquad.db.ConnectionPoolManager;
 import codesquad.db.QueryTemplate;
 import codesquad.db.ResultSetMapper;
-import org.h2.jdbcx.JdbcConnectionPool;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class RdbmsUserDao implements UserDao {
     private static final ResultSetMapper<User> USER_ROW_MAPPER = (resultSet) -> new User(
             resultSet.getString("user_id"),

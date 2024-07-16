@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 public class InMemoryUserDao implements UserDao {
     private final Map<String, User> users = new ConcurrentHashMap<>();
 
