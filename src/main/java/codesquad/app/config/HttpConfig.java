@@ -1,5 +1,6 @@
 package codesquad.app.config;
 
+import codesquad.app.usecase.CommentUsecase;
 import codesquad.app.usecase.PostUsecase;
 import codesquad.app.usecase.UserUsecase;
 import codesquad.container.Container;
@@ -22,6 +23,7 @@ public class HttpConfig {
 
         UserUsecase userUsecase = (UserUsecase) ContainerHolder.getContainer().getComponent("userUsecase");
         PostUsecase postUsecase = (PostUsecase) ContainerHolder.getContainer().getComponent("postUsecase");
+        CommentUsecase commentUsecase = (CommentUsecase) ContainerHolder.getContainer().getComponent("commentUsecase");
 
         routeEntryManager.add(
                         new RouteEntry.Builder().route(HttpMethod.GET, "/")
@@ -34,6 +36,10 @@ public class HttpConfig {
                 ).add(
                         new RouteEntry.Builder().route(HttpMethod.GET, "/post/{postId}")
                                 .handler(postUsecase::getPostDetail)
+                                .build()
+                ).add(
+                        new RouteEntry.Builder().route(HttpMethod.POST, "/post/{postId}/comment/create")
+                                .handler(commentUsecase::createComment)
                                 .build()
                 ).add(
                         new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
