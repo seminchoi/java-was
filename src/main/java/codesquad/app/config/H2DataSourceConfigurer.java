@@ -8,7 +8,7 @@ import codesquad.db.DataSourceConfigurer;
 public class H2DataSourceConfigurer implements DataSourceConfigurer {
     @Override
     public String getURL() {
-        return "jdbc:h2:../db/was";
+        return "jdbc:h2:tcp://localhost/~/workspace/java-was/db/was";
     }
 
     @Override
@@ -23,6 +23,6 @@ public class H2DataSourceConfigurer implements DataSourceConfigurer {
 
     @Override
     public DDLOption ddlOption() {
-        return DDLOption.DROP_CREATE;
+        return DDLOption.CREATE;
     }
 }
