@@ -40,7 +40,8 @@ public class RdbmsCommentDao implements CommentDao {
 
     @Override
     public List<Comment> findAll() {
-        throw new UnsupportedOperationException("댓글은 전체 조회 기능을 지원하지 않습니다.");
+        String sql = "SELECT * FROM comments";
+        return queryTemplate.query(sql, resultSetMapper);
     }
 
     public List<Comment> findByPostId(Long postId) {
