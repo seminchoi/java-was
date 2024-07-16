@@ -2,6 +2,7 @@ package codesquad.http;
 
 public enum HttpStatus {
     OK(200, "OK"),
+    CREATED(201, "Created"),
 
     FOUND(302, "Found"),
     SEE_OTHER(303, "See Other"),

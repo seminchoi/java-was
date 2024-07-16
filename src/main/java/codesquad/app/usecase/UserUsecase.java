@@ -26,21 +26,6 @@ public class UserUsecase {
         this.sessionStorage = sessionStorage;
     }
 
-    public DynamicHtml home(HttpRequest httpRequest) {
-        Session session = getSession(httpRequest);
-
-        boolean isAuthenticated = session != null && !session.isExpired();
-        DynamicHtml dynamicHtml = new DynamicHtml();
-        dynamicHtml.setArg("authenticated", isAuthenticated);
-        if (isAuthenticated) {
-            String userId = session.getIdentity().toString();
-            User user = userDao.findById(userId).get();
-            dynamicHtml.setArg("user", user);
-        }
-        dynamicHtml.setTemplate("/index.html");
-        return dynamicHtml;
-    }
-
     public HttpResponse register(HttpRequest httpRequest) {
         String body = httpRequest.getBody();
 

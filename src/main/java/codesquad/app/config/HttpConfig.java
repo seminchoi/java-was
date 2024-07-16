@@ -1,5 +1,6 @@
 package codesquad.app.config;
 
+import codesquad.app.usecase.PostUsecase;
 import codesquad.app.usecase.UserUsecase;
 import codesquad.container.Container;
 import codesquad.container.ContainerHolder;
@@ -20,10 +21,11 @@ public class HttpConfig {
         RouteEntryManager routeEntryManager = (RouteEntryManager) container.getComponent("routeEntryManager");
 
         UserUsecase userUsecase = (UserUsecase) ContainerHolder.getContainer().getComponent("userUsecase");
+        PostUsecase postUsecase = (PostUsecase) ContainerHolder.getContainer().getComponent("postUsecase");
 
         routeEntryManager.add(
                 new RouteEntry.Builder().route(HttpMethod.GET, "/")
-                        .handler(userUsecase::home)
+                        .handler(postUsecase::getPostList)
                         .build()
         ).add(
                 new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
