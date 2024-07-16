@@ -1,38 +1,39 @@
 package codesquad.app.storage;
 
 import codesquad.app.model.User;
-import codesquad.db.JdbcTemplateManager;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import codesquad.db.ConnectionPoolManager;
+import codesquad.db.QueryTemplate;
+import codesquad.db.ResultSetMapper;
+import org.h2.jdbcx.JdbcConnectionPool;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class RdbmsUserDao implements UserDao {
-    private static final RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) -> new User(
-            rs.getString("user_id"),
-            rs.getString("name"),
-            rs.getString("password")
+    private static final ResultSetMapper<User> USER_ROW_MAPPER = (resultSet) -> new User(
+            resultSet.getString("user_id"),
+            resultSet.getString("name"),
+            resultSet.getString("password")
     );
 
-    private final JdbcTemplate jdbcTemplate;
+    private final QueryTemplate queryTemplate;
 
-    public RdbmsUserDao(JdbcTemplateManager jdbcTemplateManager) {
-        jdbcTemplate = jdbcTemplateManager.getJdbcTemplate();
+    public RdbmsUserDao(ConnectionPoolManager connectionPoolManager) {
+        queryTemplate = new QueryTemplate(connectionPoolManager.getDataSource());
     }
 
     @Override
     public void save(User user) {
         String sql = "INSERT INTO users (user_id, name, password) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, user.getUserId(), user.getName(), user.getPassword());
+        queryTemplate.update(sql, user.getUserId(), user.getName(), user.getPassword());
 
     }
 
     @Override
     public Optional<User> findById(String userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
-        User user = jdbcTemplate.queryForObject(sql, USER_ROW_MAPPER, userId);
+        User user = queryTemplate.queryForObject(sql, USER_ROW_MAPPER, userId);
         return Optional.ofNullable(user);
     }
 
