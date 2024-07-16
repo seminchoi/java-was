@@ -5,6 +5,7 @@ import codesquad.app.model.User;
 import codesquad.app.service.SessionService;
 import codesquad.app.storage.CommentDao;
 import codesquad.container.Component;
+import codesquad.exception.DbConstraintException;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
@@ -43,7 +44,11 @@ public class CommentUsecase {
         Long postId = Long.parseLong(matcher.group(1));
 
         Comment comment = new Comment(content, postId, user.getUserId());
-        commendDao.save(comment);
+        try {
+            commendDao.save(comment);
+        } catch (DbConstraintException e) {
+            throw new HttpException(HttpStatus.NOT_FOUND);
+        }
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
         httpResponse.writeHeader("Location", "/post/" + postId);
