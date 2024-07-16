@@ -26,13 +26,13 @@ public class RdbmsCommentDao implements CommentDao {
 
     @Override
     public void save(Comment comment) {
-        String sql = "INSERT INTO comment (author_id, post_id, content) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO comments (author_id, post_id, content) VALUES (?, ?, ?)";
         queryTemplate.update(sql, comment.getAuthorId(), comment.getPostId(), comment.getContent());
     }
 
     @Override
     public Optional<Comment> findById(Long id) {
-        String sql = "SELECT * FROM comment WHERE id = ?";
+        String sql = "SELECT * FROM comments WHERE id = ?";
         return Optional.ofNullable(queryTemplate.queryForObject(
                 sql, resultSetMapper, id
         ));
@@ -41,5 +41,10 @@ public class RdbmsCommentDao implements CommentDao {
     @Override
     public List<Comment> findAll() {
         throw new UnsupportedOperationException("댓글은 전체 조회 기능을 지원하지 않습니다.");
+    }
+
+    public List<Comment> findByPostId(Long postId) {
+        String sql = "SELECT * FROM comments WHERE post_id = ?";
+        return queryTemplate.query(sql, resultSetMapper, postId);
     }
 }

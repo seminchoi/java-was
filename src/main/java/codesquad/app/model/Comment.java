@@ -6,6 +6,12 @@ public class Comment {
     private Long postId;
     private String authorId;
 
+    public Comment(String content, Long postId, String authorId) {
+        this.content = content;
+        this.postId = postId;
+        this.authorId = authorId;
+    }
+
     public Comment(Long id, String content, Long postId, String authorId) {
         this.id = id;
         this.content = content;
