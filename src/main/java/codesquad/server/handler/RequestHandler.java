@@ -17,10 +17,12 @@ public class RequestHandler {
 
     private final RouteEntryManager routeEntryManager;
     private final StaticFileHandler staticFileHandler;
+    private final ErrorHandler errorHandler;
 
-    public RequestHandler(RouteEntryManager routeEntryManager, StaticFileHandler staticFileHandler) {
+    public RequestHandler(RouteEntryManager routeEntryManager, StaticFileHandler staticFileHandler, ErrorHandler errorHandler) {
         this.routeEntryManager = routeEntryManager;
         this.staticFileHandler = staticFileHandler;
+        this.errorHandler = errorHandler;
     }
 
     public HttpResponse handleRequest(HttpRequest httpRequest) {
@@ -30,15 +32,26 @@ public class RequestHandler {
             return httpResponse;
         }
 
+        HttpResponse httpResponse;
+        try {
+            httpResponse = handle(httpRequest);
+        } catch (Exception e) {
+            httpResponse = errorHandler.handle(e);
+        }
+
+        return httpResponse;
+    }
+
+    private HttpResponse handle(HttpRequest httpRequest) {
         HttpResponse httpResponse = null;
 
         for (RouteEntry entry : routeEntryManager.getRouteEntries()) {
             if (entry.matches(httpRequest)) {
                 Object response = entry.getHandler().apply(httpRequest);
-                if(response instanceof DynamicHtml dynamicHtml) {
+                if (response instanceof DynamicHtml dynamicHtml) {
                     httpResponse = dynamicHtml.process();
                 }
-                if(response instanceof HttpResponse) {
+                if (response instanceof HttpResponse) {
                     httpResponse = (HttpResponse) response;
                 }
                 if (httpResponse != null) {
