@@ -45,9 +45,9 @@
         <div class="post">
             <div class="post__account">
                 <img class="post__account__img"/>
-                <p class="post__account__nickname">{dh:text="${user.name}"}</p>
+                <p class="post__account__nickname">{dh:text="${author.name}"}</p>
             </div>
-            <img class="post__img"/>
+            <img class="post__img" src="/{dh:text="${post.imageUrl}"}"/>
             <div class="post__menu">
                 <ul class="post__menu__personal">
                     <li>
@@ -70,8 +70,7 @@
                 {dh:text="${post.content}"}
             </p>
         </div>
-        <form id="commentForm" class="comment-input" action="${window.location.pathname}/comment/create"
-              method="POST">
+        <form id="commentForm" class="comment-input" method="POST">
                 <textarea
                         name="content"
                         class="comment-input__textarea"
@@ -91,9 +90,6 @@
                 </p>
             </li>
             {end-each}
-            <button id="show-all-btn" class="btn btn_ghost btn_size_m">
-                모든 댓글 보기(3개)
-            </button>
         </ul>
         <nav class="nav">
             <ul class="nav__menu">

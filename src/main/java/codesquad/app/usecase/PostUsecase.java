@@ -94,11 +94,21 @@ public class PostUsecase {
                 new HttpException(HttpStatus.NOT_FOUND)
         );
         DynamicHtml dynamicHtml = new DynamicHtml();
+
+        Session session = sessionService.getSession(httpRequest);
+        if(sessionService.isAuthenticated(session)) {
+            User user = sessionService.getUser(session);
+            dynamicHtml.setArg("authenticated", true);
+            dynamicHtml.setArg("user", user);
+        }
+
         dynamicHtml.setTemplate("/post/post_detail.html");
         dynamicHtml.setArg("post", post);
 
+
+
         User user = userDao.findById(post.getAuthorId()).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
-        dynamicHtml.setArg("user", user);
+        dynamicHtml.setArg("author", user);
 
         List<Comment> comments = commentDao.findByPostId(post.getId());
         dynamicHtml.setArg("comments", comments);
