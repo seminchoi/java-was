@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="../reset.css" rel="stylesheet"/>
+    <link href="../global.css" rel="stylesheet"/>
+    <link href="../main.css" rel="stylesheet"/>
+    <link href="../post_list.css" rel="stylesheet"/>
+    <title>게시글 목록</title>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img src="../img/signiture.svg"/></a>
+        {dh:if="${authenticated}"}
+        <p class="header__user-name">안녕하세요, <span id="logged-in-user">{dh:text="${user.name}"}</span>님</p>
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
+            </li>
+            <li class="header__menu__item">
+                <a class="btn btn_ghost btn_size_s" href="/logout">로그아웃</a>
+            </li>
+        </ul>
+        {end-if}
+        {dh:else}
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+            </li>
+            <li class="header__menu__item">
+                <a class="btn btn_ghost btn_size_s" href="/registration">
+                    회원 가입
+                </a>
+            </li>
+        </ul>
+        {end-else}
+    </header>
+    <h1 class="page-title">게시글 목록</h1>
+    <h1 class="main-title">전체 글 (168)</h1>
+    <ul class="post-list">
+        {dh:each="post : ${posts}"}
+        <a href="/post/${post.id}">
+            <article class="post">
+                <h2 class="post-title">${post.title}</h2>
+                <p class="post-excerpt">${post.content}</p>
+                <div class="post-meta">
+                    <span class="post-author-id">${post.authorId}</span>
+                </div>
+            </article>
+        </a>
+        {end-each}
+    </ul>
+</div>
+</body>
+</html>

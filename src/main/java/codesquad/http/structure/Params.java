@@ -1,5 +1,7 @@
 package codesquad.http.structure;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,15 +19,23 @@ public class Params {
                 continue;
             }
 
-            String key = pair.substring(0, splitIndex);
+            String key = decodeUrlComponent(pair.substring(0, splitIndex));
             String value = null;
             if (pair.length() > splitIndex + 1) {
-                value = pair.substring(splitIndex + 1);
+                value = decodeUrlComponent(pair.substring(splitIndex + 1));
             }
 
             if (value != null && !params.containsKey(key)) {
                 params.put(key, value);
             }
+        }
+    }
+
+    private String decodeUrlComponent(String component) {
+        try {
+            return URLDecoder.decode(component, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 

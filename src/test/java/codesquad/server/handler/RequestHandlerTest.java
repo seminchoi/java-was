@@ -1,5 +1,8 @@
 package codesquad.server.handler;
 
+import codesquad.container.Container;
+import codesquad.container.ContainerConfigurer;
+import codesquad.container.ContainerHolder;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
@@ -20,14 +23,38 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RequestHandlerTest {
+    private static ContainerConfigurer containerConfigurer = new ContainerConfigurer() {
+        @Override
+        public List<String> getTargets() {
+            return List.of("codesquad.server.handler.RequestHandler",
+                    "codesquad.server.handler.StaticFileHandler",
+                    "codesquad.server.router.RouteEntryManager",
+                    "codesquad.server.router.StaticFilePathManager"
+            );
+        }
+
+        @Override
+        public void addTargets(String... targets) {
+        }
+    };
 
     private RequestHandler requestHandler;
 
+
     @BeforeEach
     void setUp() {
-        StaticFilePathManager staticFilePathManager = new StaticFilePathManager();
-        StaticFileHandler staticFileHandler = new StaticFileHandler(staticFilePathManager);
-        requestHandler = new RequestHandler(new TestRouteEntryManager(), staticFileHandler);
+
+        ContainerHolder.init(containerConfigurer);
+        Container container = ContainerHolder.getContainer();
+        RouteEntryManager routeEntryManager = (RouteEntryManager) container.getComponent("routeEntryManager");
+        routeEntryManager.add(new RouteEntry.Builder().route(HttpMethod.GET, "/hello")
+                .handler(httpRequest -> new HttpResponse(HttpStatus.OK))
+                .build()
+        );
+        StaticFilePathManager staticFilePathManager = (StaticFilePathManager) container.getComponent("staticFilePathManager");
+        staticFilePathManager.addPath("static");
+
+        requestHandler = (RequestHandler) container.getComponent("requestHandler");
     }
 
     @Test
@@ -69,14 +96,5 @@ class RequestHandlerTest {
         String response = new String(httpResponse.makeResponse());
 
         assertTrue(response.contains("HTTP/1.1 200 OK"));
-    }
-
-    private static class TestRouteEntryManager extends RouteEntryManager {
-        @Override
-        public List<RouteEntry> getRouteEntry() {
-            return List.of(
-                    new RouteEntry.Builder().route(HttpMethod.GET, "/hello")
-                            .handler(httpRequest -> new HttpResponse(HttpStatus.OK)).build());
-        }
     }
 }

@@ -1,12 +1,13 @@
 package codesquad.app.usecase;
 
 import codesquad.app.model.User;
-import codesquad.app.storage.UserStorage;
+import codesquad.app.storage.InMemoryUserDao;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.security.SessionStorage;
+import codesquad.template.DynamicHtml;
 import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,42 +23,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserUsecaseTest {
     private UserUsecase userUsecase;
-    private UserStorage userStorage;
+    private InMemoryUserDao userStorage;
     private SessionStorage sessionStorage;
 
 
     @BeforeEach
     void setUp() {
-        userStorage = new UserStorage();
+        userStorage = new InMemoryUserDao();
         sessionStorage = new SessionStorage();
         userUsecase = new UserUsecase(userStorage, sessionStorage);
-    }
-
-    @Test
-    void 홈_화면을_요청할때_로그인_되지_않았다면_로그인_버튼이_존재한다() throws URISyntaxException {
-        HttpRequest httpRequest = createHttpRequest("/");
-        HttpResponse httpResponse = userUsecase.home(httpRequest);
-
-        String response = new String(httpResponse.makeResponse());
-
-        assertThat(response).contains("로그인");
-        assertThat(response).doesNotContain("로그아웃");
-    }
-
-    @Test
-    void 홈_화면을_요청할때_로그인_되었다면_사용자_이름과_로그아웃_버튼이_존재한다() throws URISyntaxException {
-        register();
-        HttpResponse loginResponse = login("semin", "1234");
-        String sessionId = getSessionId(loginResponse);
-
-        HttpRequest httpRequest = createHttpRequest(HttpMethod.GET, "/", createHeaders(sessionId));
-        HttpResponse homeResponse = userUsecase.home(httpRequest);
-
-        String response = new String(homeResponse.makeResponse());
-
-        assertThat(response).contains("로그아웃");
-        assertThat(response).contains("semin");
-        assertThat(response).doesNotContain("로그인");
     }
 
     @Test
@@ -138,7 +112,7 @@ public class UserUsecaseTest {
     @Test
     void 사용자_리스트_페이지_요청_시_로그인_되어있지_않으면_로그인페이지로_리다이렉트_된다() throws URISyntaxException {
         HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/user/list");
-        HttpResponse httpResponse = userUsecase.userList(httpRequest);
+        HttpResponse httpResponse = (HttpResponse) userUsecase.userList(httpRequest);
 
         String response = new String(httpResponse.makeResponse());
 
@@ -148,16 +122,17 @@ public class UserUsecaseTest {
 
     @Test
     void 사용자_리스트_페이지_요청_시_로그인_되어있으면_회원가입_사용자_목록을_반환한다() throws URISyntaxException {
-        userStorage.saveUser(new User("semin1","semin1","semin1"));
-        userStorage.saveUser(new User("semin2","semin2","semin2"));
-        userStorage.saveUser(new User("semin3","semin3","semin3"));
+        userStorage.save(new User("semin1","semin1","semin1"));
+        userStorage.save(new User("semin2","semin2","semin2"));
+        userStorage.save(new User("semin3","semin3","semin3"));
         HttpResponse loginResponse = login("semin1", "semin1");
         String sessionId = getSessionId(loginResponse);
         Map<String, String> headers = createHeaders(sessionId);
-        HttpResponse httpResponse = userUsecase.userList(
+        DynamicHtml dynamicHtml = (DynamicHtml) userUsecase.userList(
                 HttpRequestUtil.createHttpRequest(HttpMethod.GET, "/user/list", headers)
         );
 
+        HttpResponse httpResponse = dynamicHtml.process();
         String response = new String(httpResponse.makeResponse());
 
         assertThat(response).contains("semin1");

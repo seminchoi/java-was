@@ -1,49 +1,29 @@
 package codesquad.app.usecase;
 
-import codesquad.exception.HttpException;
-import codesquad.template.DynamicHtml;
 import codesquad.app.model.User;
-import codesquad.http.security.Session;
-import codesquad.http.security.SessionStorage;
-import codesquad.file.AppFileReader;
+import codesquad.app.storage.UserDao;
+import codesquad.container.Component;
+import codesquad.exception.HttpException;
 import codesquad.http.Cookie;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
+import codesquad.http.security.Session;
+import codesquad.http.security.SessionStorage;
 import codesquad.http.structure.Params;
-import codesquad.app.storage.UserStorage;
+import codesquad.template.DynamicHtml;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class UserUsecase {
-    private final UserStorage userStorage;
+    private final UserDao userDao;
     private final SessionStorage sessionStorage;
 
-    public UserUsecase(UserStorage userStorage, SessionStorage sessionStorage) {
-        this.userStorage = userStorage;
+    public UserUsecase(UserDao userDao, SessionStorage sessionStorage) {
+        this.userDao = userDao;
         this.sessionStorage = sessionStorage;
-    }
-
-    public HttpResponse home(HttpRequest httpRequest) {
-        Session session = getSession(httpRequest);
-
-        boolean isAuthenticated = session != null && !session.isExpired();
-        DynamicHtml dynamicHtml = new DynamicHtml();
-        dynamicHtml.setArg("authenticated", isAuthenticated);
-        if(isAuthenticated) {
-            String userId = session.getIdentity().toString();
-            User user = userStorage.findByUserId(userId).get();
-            dynamicHtml.setArg("user", user);
-        }
-        AppFileReader fileReader = new AppFileReader("static/index.html");
-        String content = fileReader.getContent();
-        String processed = dynamicHtml.process(content);
-
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
-        httpResponse.writeBody(processed.getBytes());
-
-        return httpResponse;
     }
 
     public HttpResponse register(HttpRequest httpRequest) {
@@ -57,7 +37,7 @@ public class UserUsecase {
 
         User user = new User(userId, password, name);
 
-        userStorage.saveUser(user);
+        userDao.save(user);
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
         httpResponse.writeHeader("Location", "/");
@@ -95,7 +75,7 @@ public class UserUsecase {
     }
 
     private User authenticate(String userId, String password) {
-        Optional<User> optionalUser = userStorage.findByUserId(userId);
+        Optional<User> optionalUser = userDao.findById(userId);
         if (optionalUser.isEmpty()) {
             return null;
         }
@@ -110,7 +90,7 @@ public class UserUsecase {
     public HttpResponse logout(HttpRequest httpRequest) {
         Session session = getSession(httpRequest);
 
-        if(session == null) {
+        if (session == null) {
             throw new HttpException(HttpStatus.UNAUTHORIZED);
         }
 
@@ -121,27 +101,21 @@ public class UserUsecase {
         return httpResponse;
     }
 
-    public HttpResponse userList(HttpRequest httpRequest) {
+    public Object userList(HttpRequest httpRequest) {
         Session session = getSession(httpRequest);
-        if(session == null || session.isExpired()) {
+        if (session == null || session.isExpired()) {
             HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
             httpResponse.writeHeader("Location", "/login");
 
             return httpResponse;
         }
 
-        AppFileReader fileReader = new AppFileReader("static/user/user_list.html");
-        String content = fileReader.getContent();
-
         DynamicHtml dynamicHtml = new DynamicHtml();
-        List<User> users = userStorage.findAll();
+        dynamicHtml.setTemplate("/user/user_list.html");
+        List<User> users = userDao.findAll();
         dynamicHtml.setArg("users", users);
-        String html = dynamicHtml.process(content);
 
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
-        httpResponse.writeBody(html.getBytes());
-
-        return httpResponse;
+        return dynamicHtml;
     }
 
     private Session getSession(HttpRequest httpRequest) {

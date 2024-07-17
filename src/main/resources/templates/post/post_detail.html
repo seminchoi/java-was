@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="../reset.css" rel="stylesheet"/>
+    <link href="../global.css" rel="stylesheet"/>
+    <link href="../main.css" rel="stylesheet"/>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('commentForm');
+            form.action = window.location.pathname + '/comment/create';
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img src="../img/signiture.svg"/></a>
+        {dh:if="${authenticated}"}
+        <p class="header__user-name">안녕하세요, <span id="logged-in-user">{dh:text="${user.name}"}</span>님</p>
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
+            </li>
+            <li class="header__menu__item">
+                <a class="btn btn_ghost btn_size_s" href="/logout">로그아웃</a>
+            </li>
+        </ul>
+        {end-if}
+        {dh:else}
+        <ul class="header__menu">
+            <li class="header__menu__item">
+                <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+            </li>
+            <li class="header__menu__item">
+                <a class="btn btn_ghost btn_size_s" href="/registration">
+                    회원 가입
+                </a>
+            </li>
+        </ul>
+        {end-else}
+    </header>
+    <div class="wrapper">
+        <div class="post">
+            <div class="post__account">
+                <img class="post__account__img"/>
+                <p class="post__account__nickname">{dh:text="${user.name}"}</p>
+            </div>
+            <img class="post__img"/>
+            <div class="post__menu">
+                <ul class="post__menu__personal">
+                    <li>
+                        <button class="post__menu__btn">
+                            <img src="../img/like.svg"/>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="post__menu__btn">
+                            <img src="../img/sendLink.svg"/>
+                        </button>
+                    </li>
+                </ul>
+                <button class="post__menu__btn">
+                    <img src="../img/bookMark.svg"/>
+                </button>
+            </div>
+            <h4 class="post__title">{dh:text="${post.title}"}</h4>
+            <p class="post__article">
+                {dh:text="${post.content}"}
+            </p>
+        </div>
+        <form id="commentForm" class="comment-input" action="${window.location.pathname}/comment/create"
+              method="POST">
+                <textarea
+                        name="content"
+                        class="comment-input__textarea"
+                        laceholder="댓글을 입력하세요..."
+                        required
+                >
+                </textarea>
+            <button type="submit" class="comment-input__button">댓글 작성</button>
+        </form>
+        <ul class="comment">
+            {dh:each="comment : ${comments}"}
+            <li class="comment__item">
+                <div class="comment__item__user">
+                    <img class="comment__item__user__img"/>
+                    <p class="comment__item__user__nickname">${comment.authorId}</p>
+                </div>
+                <p class="comment__item__article">
+                    ${comment.content}
+                </p>
+            </li>
+            {end-each}
+            <button id="show-all-btn" class="btn btn_ghost btn_size_m">
+                모든 댓글 보기(3개)
+            </button>
+        </ul>
+        <nav class="nav">
+            <ul class="nav__menu">
+                {dh:if="${previousExist}"}
+                <li class="nav__menu__item nav__menu__item--previous">
+                    <a class="nav__menu__item__btn " href="/post/{dh:text="${previous}"}">
+                        <img
+                                class="nav__menu__item__img"
+                                src="../img/ci_chevron-left.svg"
+                        />
+                        이전 글
+                    </a>
+                </li>
+                {end-if}
+                {dh:if="${nextExist}"}
+                <li class="nav__menu__item nav__menu__item--next">
+                    <a class="nav__menu__item__btn" href="/post/{dh:text="${next}"}">
+                        다음 글
+                        <img
+                                class="nav__menu__item__img"
+                                src="../img/ci_chevron-right.svg"
+                        />
+                    </a>
+                </li>
+                {end-if}
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

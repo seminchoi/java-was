@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{dh:if="${showPeople}"}
+People: {dh:each="person : ${people}"}${person.name}, {end-each}
+{end-if}
+{dh:else}
+No people to display
+{end-else}
+</body>
+</html>

@@ -92,4 +92,8 @@ public class HttpRequest {
     public String getBody() {
         return body;
     }
+
+    public Params getBodyByUrlDecodedParams()  {
+        return new Params(body);
+    }
 }
