@@ -67,8 +67,13 @@ public class PostUsecase {
 
         AppFileWriter appFileWriter = new AppFileWriter();
         MultiPartFile image = params.getFile("image");
-        String imageUrl = appFileWriter.saveFile(image);
-
+        String imageUrl = null;
+        if (image != null) {
+            if(!image.getContentType().getDirective().startsWith("img")) {
+                throw new HttpException(HttpStatus.BAD_REQUEST, "이미지만 업로드 할 수 있습니다.");
+            }
+            imageUrl = appFileWriter.saveFile(image);
+        }
 
         Post post = new Post(
                 params.get("title"),
@@ -96,7 +101,7 @@ public class PostUsecase {
         DynamicHtml dynamicHtml = new DynamicHtml();
 
         Session session = sessionService.getSession(httpRequest);
-        if(sessionService.isAuthenticated(session)) {
+        if (sessionService.isAuthenticated(session)) {
             User user = sessionService.getUser(session);
             dynamicHtml.setArg("authenticated", true);
             dynamicHtml.setArg("user", user);
@@ -104,7 +109,6 @@ public class PostUsecase {
 
         dynamicHtml.setTemplate("/post/post_detail.html");
         dynamicHtml.setArg("post", post);
-
 
 
         User user = userDao.findById(post.getAuthorId()).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
