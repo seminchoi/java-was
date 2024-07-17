@@ -89,6 +89,8 @@ public class CommentUsecaseTest {
         PostUsecase postUsecase = (PostUsecase) container.getComponent("postUsecase");
 
         Map<String, String> sessionHeader = LoginUtils.registerAndLogin(container);
+        sessionHeader.put("Content-Type", "application/x-www-form-urlencoded");
+
         HttpRequest postCreateRequest = createHttpRequest(HttpMethod.POST, "/post/create",
                 sessionHeader, "title=hi&content=hello");
         postUsecase.createPost(postCreateRequest);
@@ -102,6 +104,8 @@ public class CommentUsecaseTest {
         PostUsecase postUsecase = (PostUsecase) container.getComponent("postUsecase");
 
         Map<String, String> sessionHeader = LoginUtils.registerAndLogin(container);
+        sessionHeader.put("Content-Type", "application/x-www-form-urlencoded");
+
         HttpRequest postCreateRequest = createHttpRequest(HttpMethod.POST, "/post/create",
                 sessionHeader, "title=hi&content=hello");
         postUsecase.createPost(postCreateRequest);

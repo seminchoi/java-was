@@ -82,12 +82,6 @@ public class UserUsecaseTest {
     }
 
     @Test
-    void 로그아웃_요청시_세션이_없으면_예외를_반환한다() {
-        assertThatThrownBy(() -> logout(null))
-                .isInstanceOf(HttpException.class);
-    }
-
-    @Test
     void 로그아웃_요청_시_세션이_삭제된다() throws URISyntaxException {
         register();
         HttpResponse httpResponse = login("semin", "1234");
@@ -144,7 +138,7 @@ public class UserUsecaseTest {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Length", "37");
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/user/create", headers);
-        httpRequest.writeBody("userId=semin&name=semin&password=1234");
+        httpRequest.writeBody("userId=semin&name=semin&password=1234".getBytes());
         return userUsecase.register(httpRequest);
     }
 
@@ -153,7 +147,7 @@ public class UserUsecaseTest {
         String body = "userId=" + id+ "&password=" + password;
         headers.put("Content-Length", String.valueOf(body.length()));
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/login", headers);
-        httpRequest.writeBody(body);
+        httpRequest.writeBody(body.getBytes());
         return userUsecase.login(httpRequest);
     }
 

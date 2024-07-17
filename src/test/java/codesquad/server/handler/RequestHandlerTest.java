@@ -28,9 +28,16 @@ class RequestHandlerTest {
         public List<String> getTargets() {
             return List.of("codesquad.server.handler.RequestHandler",
                     "codesquad.server.handler.StaticFileHandler",
+                    "codesquad.server.handler.CommonFileHandler",
                     "codesquad.server.handler.ErrorHandler",
+                    "codesquad.http.security.SessionStorage",
+                    "codesquad.app.storage.RdbmsUserDao",
+                    "codesquad.db.H2ConnectionPoolManager",
+                    "codesquad.db.TestDataSourceConfigurer",
+                    "codesquad.app.service.SessionService",
                     "codesquad.server.router.RouteEntryManager",
-                    "codesquad.server.router.StaticFilePathManager"
+                    "codesquad.server.router.StaticFilePathManager",
+                    "codesquad.server.router.CommonFilePathManager"
             );
         }
 

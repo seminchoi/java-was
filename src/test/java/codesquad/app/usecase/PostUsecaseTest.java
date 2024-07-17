@@ -58,6 +58,7 @@ public class PostUsecaseTest {
     @Test
     void 게시글을_작성할_때_로그인했으면_리다이렉트_된다() throws URISyntaxException {
         Map<String, String> sessionHeader = LoginUtils.registerAndLogin(container);
+        sessionHeader.put("Content-Type", "application/x-www-form-urlencoded");
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/post/create", sessionHeader, "title=hi&content=hello");
 
         HttpResponse httpResponse = postUsecase.createPost(httpRequest);
@@ -149,6 +150,7 @@ public class PostUsecaseTest {
 
     private void createPost() throws URISyntaxException {
         Map<String, String> sessionHeader = LoginUtils.registerAndLogin(container);
+        sessionHeader.put("Content-Type", "application/x-www-form-urlencoded");
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/post/create",
                 sessionHeader, "title=hi&content=hello");
         postUsecase.createPost(httpRequest);
@@ -156,6 +158,7 @@ public class PostUsecaseTest {
 
     private Long createPostAndComment() throws URISyntaxException {
         Map<String, String> sessionHeader = LoginUtils.registerAndLogin(container);
+        sessionHeader.put("Content-Type", "application/x-www-form-urlencoded");
         HttpRequest postCreateRequest = createHttpRequest(HttpMethod.POST, "/post/create",
                 sessionHeader, "title=hi&content=hello");
         postUsecase.createPost(postCreateRequest);

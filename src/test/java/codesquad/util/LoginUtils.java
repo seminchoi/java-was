@@ -18,7 +18,7 @@ public class LoginUtils {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Length", "37");
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/user/create", headers);
-        httpRequest.writeBody("userId=semin&name=semin&password=1234");
+        httpRequest.writeBody("userId=semin&name=semin&password=1234".getBytes());
         UserUsecase userUsecase = (UserUsecase) container.getComponent("userUsecase");
         return userUsecase.register(httpRequest);
     }
@@ -29,7 +29,7 @@ public class LoginUtils {
         String body = "userId=semin&password=1234";
         headers.put("Content-Length", String.valueOf(body.length()));
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/login", headers);
-        httpRequest.writeBody(body);
+        httpRequest.writeBody(body.getBytes());
         UserUsecase userUsecase = (UserUsecase) container.getComponent("userUsecase");
         HttpResponse login = userUsecase.login(httpRequest);
         String sessionId = getSessionId(login);
@@ -41,7 +41,7 @@ public class LoginUtils {
         String body = "userId=" + id+ "&password=" + password;
         headers.put("Content-Length", String.valueOf(body.length()));
         HttpRequest httpRequest = createHttpRequest(HttpMethod.POST, "/login", headers);
-        httpRequest.writeBody(body);
+        httpRequest.writeBody(body.getBytes());
         UserUsecase userUsecase = (UserUsecase) container.getComponent("userUsecase");
         return userUsecase.login(httpRequest);
     }
