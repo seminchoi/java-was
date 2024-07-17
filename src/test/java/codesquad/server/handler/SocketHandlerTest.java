@@ -51,7 +51,7 @@ public class SocketHandlerTest {
         private boolean throwException = false;
 
         public MockRequestHandler() {
-            super(null, null); // 부모 클래스의 생성자를 호출, 필요한 매개변수는 null로 설정
+            super(null, null, null); // 부모 클래스의 생성자를 호출, 필요한 매개변수는 null로 설정
         }
 
         public void setHttpResponse(HttpResponse response) {

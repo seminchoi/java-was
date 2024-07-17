@@ -14,6 +14,7 @@ public class StaticFileHandlerTest {
     @BeforeEach
     public void setUp() {
         StaticFilePathManager staticFilePathManager = new StaticFilePathManager();
+        staticFilePathManager.addPath("static");
         staticFileHandler = new StaticFileHandler(staticFilePathManager);
     }
 
