@@ -19,7 +19,7 @@ public class HttpRequestUtil {
 
     public static HttpRequest createHttpRequest(HttpMethod method, String requestUri, Map<String, String> headers, String body) throws URISyntaxException {
         HttpRequest httpRequest = createHttpRequest(method, requestUri, headers);
-        httpRequest.writeBody(body);
+        httpRequest.writeBody(body.getBytes());
         return httpRequest;
     }
 
