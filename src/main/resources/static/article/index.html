@@ -23,7 +23,7 @@
       </header>
       <div class="page">
         <h2 class="page-title">게시글 작성</h2>
-        <form class="form" method="post" action="/post/create">
+        <form class="form" method="post" action="/post/create" enctype="multipart/form-data">
           <div class="textfield textfield_size_s">
             <p class="title_textfield">제목</p>
             <input
@@ -42,6 +42,14 @@
               name="content"
             ></textarea>
           </div>
+          <div class="image-upload">
+            <p class="title_textfield">이미지 추가</p>
+            <div class="image-upload-container">
+              <label for="image-upload" class="btn btn_ghost btn_size_s">이미지 선택</label>
+              <input type="file" id="image-upload" name="image" accept="image/*">
+              <div id="image-preview" class="image-preview"></div>
+            </div>
+          </div>
           <button
             id="registration-btn"
             class="btn btn_contained btn_size_m"
@@ -55,3 +63,20 @@
     </div>
   </body>
 </html>
+
+<script>
+  document.getElementById('image-upload').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        const preview = document.getElementById('image-preview');
+        preview.innerHTML = '';
+        preview.appendChild(img);
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
