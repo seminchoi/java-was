@@ -30,7 +30,7 @@ public class DynamicHtml {
         arguments.put(key, value);
     }
 
-    public HttpResponse process() {
+    public HttpResponse process(HttpStatus httpStatus) {
         AppFileReader fileReader = new AppFileReader(templatePathPrefix + templateName);
         String content = fileReader.getContent();
 
@@ -38,10 +38,14 @@ public class DynamicHtml {
         content = processEachBlocks(content);
         content = processTextBlocks(content);
 
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.OK);
+        HttpResponse httpResponse = new HttpResponse(httpStatus);
         httpResponse.writeBody(content.getBytes());
 
         return httpResponse;
+    }
+
+    public HttpResponse process() {
+        return process(HttpStatus.OK);
     }
 
     private String processIfBlocks(String html) {
