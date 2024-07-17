@@ -7,21 +7,24 @@ public class Post {
     private Long id;
     private String title;
     private String content;
+    private String imageUrl;
     private String authorId;
 
-    public Post(Long id, String title, String content, String authorId) {
-        validateTitle(title);
-        validateContent(content);
-
+    public Post(Long id, String title, String content, String imageUrl, String authorId) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.authorId = authorId;
     }
 
-    public Post(String title, String content, String authorId) {
+    public Post(String title, String content, String imageUrl, String authorId) {
+        validateTitle(title);
+        validateContent(content);
+
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.authorId = authorId;
     }
 
@@ -51,5 +54,9 @@ public class Post {
 
     public String getAuthorId() {
         return authorId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
