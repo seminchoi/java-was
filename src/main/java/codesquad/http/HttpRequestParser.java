@@ -4,26 +4,23 @@ import codesquad.exception.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class HttpRequestParser {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
 
     public static HttpRequest parseRequest(final InputStream inputStream) {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            HttpRequest httpRequest = parseHeader(bufferedReader);
-            writeBody(bufferedReader, httpRequest);
+            byte[] headerBytes = readHeader(inputStream);
+            HttpRequest httpRequest = parseHeader(new String(headerBytes, StandardCharsets.UTF_8));
+            byte[] bodyBytes = readBody(inputStream, httpRequest.getContentLength());
+            httpRequest.writeBody(bodyBytes);
             return httpRequest;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -31,13 +28,28 @@ public class HttpRequestParser {
         }
     }
 
-    private static HttpRequest parseHeader(final BufferedReader bufferedReader) throws IOException {
-        List<String> request = new ArrayList<>();
+    private static byte[] readHeader(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream headerBytes = new ByteArrayOutputStream();
+        int b;
+        int consecutiveNewlines = 0;
 
-        String line;
-        while ((line = bufferedReader.readLine()) != null && !line.isEmpty()) {
-            request.add(line);
+        while ((b = inputStream.read()) != -1) {
+            headerBytes.write(b);
+            if (b == '\n') {
+                consecutiveNewlines++;
+                if (consecutiveNewlines == 2) {
+                    break;
+                }
+            } else if (b != '\r') {
+                consecutiveNewlines = 0;
+            }
         }
+        return headerBytes.toByteArray();
+    }
+
+    private static HttpRequest parseHeader(String headerString) {
+        String[] lines = headerString.split("\r\n");
+        List<String> request = new ArrayList<>(Arrays.asList(lines));
 
         if (request.isEmpty()) {
             throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,18 +100,23 @@ public class HttpRequestParser {
         return headers;
     }
 
-    private static void writeBody(final BufferedReader bufferedReader, final HttpRequest httpRequest) throws IOException {
-        int contentLength = httpRequest.getContentLength();
 
+    private static byte[] readBody(InputStream inputStream, int contentLength) throws IOException {
         if (contentLength <= 0) {
-            return;
+            return new byte[0];
         }
 
-        char[] body = new char[contentLength];
-        bufferedReader.read(body);
+        byte[] body = new byte[contentLength];
+        int bytesRead = 0;
+        while (bytesRead < contentLength) {
+            int read = inputStream.read(body, bytesRead, contentLength - bytesRead);
+            if (read == -1) {
+                break;
+            }
+            bytesRead += read;
+        }
 
-        String decodedBody = URLDecoder.decode(new String(body), "UTF-8");
-        logger.info(decodedBody);
-        httpRequest.writeBody(decodedBody);
+        logger.debug("body: {}", new String(body));
+        return body;
     }
 }
