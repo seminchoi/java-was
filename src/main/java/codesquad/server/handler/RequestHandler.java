@@ -15,12 +15,15 @@ import org.slf4j.LoggerFactory;
 public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
+    //TODO: 추상화 수준 맞추고 List로 관리하기
     private final RouteEntryManager routeEntryManager;
+    private final CommonFileHandler commonFileHandler;
     private final StaticFileHandler staticFileHandler;
     private final ErrorHandler errorHandler;
 
-    public RequestHandler(RouteEntryManager routeEntryManager, StaticFileHandler staticFileHandler, ErrorHandler errorHandler) {
+    public RequestHandler(RouteEntryManager routeEntryManager, CommonFileHandler commonFileHandler, StaticFileHandler staticFileHandler, ErrorHandler errorHandler) {
         this.routeEntryManager = routeEntryManager;
+        this.commonFileHandler = commonFileHandler;
         this.staticFileHandler = staticFileHandler;
         this.errorHandler = errorHandler;
     }
@@ -36,7 +39,7 @@ public class RequestHandler {
         try {
             httpResponse = handle(httpRequest);
         } catch (Exception e) {
-            httpResponse = errorHandler.handle(e);
+            httpResponse = errorHandler.handle(httpRequest, e);
         }
 
         return httpResponse;
@@ -58,6 +61,11 @@ public class RequestHandler {
                     return httpResponse;
                 }
             }
+        }
+
+        httpResponse = commonFileHandler.handle(httpRequest);
+        if (httpResponse != null) {
+            return httpResponse;
         }
 
         httpResponse = staticFileHandler.handle(httpRequest.getPath());
