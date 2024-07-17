@@ -15,6 +15,7 @@ public class RdbmsPostDao implements PostDao {
             resultSet.getLong("id"),
             resultSet.getString("title"),
             resultSet.getString("content"),
+            resultSet.getString("image_url"),
             resultSet.getString("author_id")
     );
 
@@ -27,8 +28,8 @@ public class RdbmsPostDao implements PostDao {
 
     @Override
     public void save(Post post) {
-        final String sql = "INSERT INTO posts (title, content, author_id) VALUES (?, ?, ?)";
-        queryTemplate.update(sql, post.getTitle(), post.getContent(), post.getAuthorId());
+        final String sql = "INSERT INTO posts (title, content, image_url, author_id) VALUES (?, ?, ?, ?)";
+        queryTemplate.update(sql, post.getTitle(), post.getContent(), post.getImageUrl(), post.getAuthorId());
     }
 
     @Override

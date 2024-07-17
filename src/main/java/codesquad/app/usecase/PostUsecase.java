@@ -3,6 +3,7 @@ package codesquad.app.usecase;
 import codesquad.app.model.Comment;
 import codesquad.app.model.Post;
 import codesquad.app.model.User;
+import codesquad.app.service.AppFileWriter;
 import codesquad.app.service.SessionService;
 import codesquad.app.storage.CommentDao;
 import codesquad.app.storage.PostDao;
@@ -13,6 +14,7 @@ import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
 import codesquad.http.security.Session;
+import codesquad.http.structure.MultiPartFile;
 import codesquad.http.structure.Params;
 import codesquad.template.DynamicHtml;
 
@@ -63,11 +65,18 @@ public class PostUsecase {
 
         Params params = httpRequest.getBodyByUrlDecodedParams();
 
+        AppFileWriter appFileWriter = new AppFileWriter();
+        MultiPartFile image = params.getFile("image");
+        String imageUrl = appFileWriter.saveFile(image);
+
+
         Post post = new Post(
                 params.get("title"),
                 params.get("content"),
+                imageUrl,
                 user.getUserId()
         );
+
 
         postDao.save(post);
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
