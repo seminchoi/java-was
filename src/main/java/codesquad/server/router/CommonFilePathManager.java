@@ -1,4 +1,4 @@
-package codesquad.server.handler;
+package codesquad.server.router;
 
 import codesquad.container.Component;
 

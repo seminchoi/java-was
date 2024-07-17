@@ -6,7 +6,7 @@ import codesquad.app.usecase.UserUsecase;
 import codesquad.container.Container;
 import codesquad.container.ContainerHolder;
 import codesquad.http.HttpMethod;
-import codesquad.server.handler.CommonFilePathManager;
+import codesquad.server.router.CommonFilePathManager;
 import codesquad.server.router.RouteEntry;
 import codesquad.server.router.RouteEntryManager;
 import codesquad.server.router.StaticFilePathManager;

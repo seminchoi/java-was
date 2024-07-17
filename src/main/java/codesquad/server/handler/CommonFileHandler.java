@@ -4,6 +4,7 @@ import codesquad.container.Component;
 import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
+import codesquad.server.router.CommonFilePathManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
