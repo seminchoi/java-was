@@ -5,6 +5,7 @@ import codesquad.app.model.Post;
 import codesquad.app.model.User;
 import codesquad.app.service.AppFileWriter;
 import codesquad.app.service.SessionService;
+import codesquad.app.service.TemplateHeaderService;
 import codesquad.app.storage.CommentDao;
 import codesquad.app.storage.PostDao;
 import codesquad.app.storage.UserDao;
@@ -27,28 +28,24 @@ public class PostUsecase {
     private final Pattern POST_URL_PATTERN = Pattern.compile("/post/(\\d+)");
 
     private final SessionService sessionService;
+    private final TemplateHeaderService templateHeaderService;
     private final PostDao postDao;
     private final CommentDao commentDao;
     private final UserDao userDao;
 
 
-    public PostUsecase(SessionService sessionService, PostDao postDao, CommentDao commentDao, UserDao userDao) {
+    public PostUsecase(SessionService sessionService, TemplateHeaderService templateHeaderService, PostDao postDao, CommentDao commentDao, UserDao userDao) {
         this.sessionService = sessionService;
+        this.templateHeaderService = templateHeaderService;
         this.postDao = postDao;
         this.commentDao = commentDao;
         this.userDao = userDao;
     }
 
     public DynamicHtml getPostList(HttpRequest httpRequest) {
-        Session session = sessionService.getSession(httpRequest);
-
         DynamicHtml dynamicHtml = new DynamicHtml();
-        boolean authenticated = sessionService.isAuthenticated(session);
-        dynamicHtml.setArg("authenticated", authenticated);
-        if (authenticated) {
-            User user = sessionService.getUser(session);
-            dynamicHtml.setArg("user", user);
-        }
+
+        templateHeaderService.addHeaderProperties(httpRequest, dynamicHtml);
         List<Post> posts = postDao.findAll();
         dynamicHtml.setArg("posts", posts);
         dynamicHtml.setTemplate("/index.html");
@@ -62,14 +59,22 @@ public class PostUsecase {
             throw new HttpException(HttpStatus.UNAUTHORIZED, "로그인 후 이용 가능합니다.");
         }
         User user = sessionService.getUser(session);
+        Post post = createPostFromRequest(httpRequest, user);
 
+        postDao.save(post);
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
+        httpResponse.writeHeader("Location", "/");
+        return httpResponse;
+    }
+
+    private Post createPostFromRequest(HttpRequest httpRequest, User user) {
         Params params = httpRequest.getBodyByUrlDecodedParams();
 
         AppFileWriter appFileWriter = new AppFileWriter();
         MultiPartFile image = params.getFile("image");
         String imageUrl = null;
         if (image != null) {
-            if(!image.getContentType().isImage()) {
+            if (!image.getContentType().isImage()) {
                 throw new HttpException(HttpStatus.BAD_REQUEST, "이미지만 업로드 할 수 있습니다.");
             }
             imageUrl = appFileWriter.saveFile(image);
@@ -81,12 +86,7 @@ public class PostUsecase {
                 imageUrl,
                 user.getUserId()
         );
-
-
-        postDao.save(post);
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
-        httpResponse.writeHeader("Location", "/");
-        return httpResponse;
+        return post;
     }
 
     public DynamicHtml getPostDetail(HttpRequest httpRequest) {
@@ -100,16 +100,10 @@ public class PostUsecase {
         );
         DynamicHtml dynamicHtml = new DynamicHtml();
 
-        Session session = sessionService.getSession(httpRequest);
-        if (sessionService.isAuthenticated(session)) {
-            User user = sessionService.getUser(session);
-            dynamicHtml.setArg("authenticated", true);
-            dynamicHtml.setArg("user", user);
-        }
+        templateHeaderService.addHeaderProperties(httpRequest, dynamicHtml);
 
         dynamicHtml.setTemplate("/post/post_detail.html");
         dynamicHtml.setArg("post", post);
-
 
         User user = userDao.findById(post.getAuthorId()).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
         dynamicHtml.setArg("author", user);
