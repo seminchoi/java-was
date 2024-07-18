@@ -4,6 +4,7 @@ import codesquad.exception.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,13 +14,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpRequestParser {
+    private static final int MAX_HEADER_SIZE = 8192;
+    private static final int MAX_BODY_SIZE = 10;
     private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
 
     public static HttpRequest parseRequest(final InputStream inputStream) {
         try {
-            byte[] headerBytes = readHeader(inputStream);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+            byte[] headerBytes = readHeader(bufferedInputStream);
             HttpRequest httpRequest = parseHeader(new String(headerBytes, StandardCharsets.UTF_8));
-            byte[] bodyBytes = readBody(inputStream, httpRequest.getContentLength());
+            byte[] bodyBytes = readBody(bufferedInputStream, httpRequest.getContentLength());
             httpRequest.writeBody(bodyBytes);
             return httpRequest;
         } catch (IOException e) {
@@ -31,9 +35,11 @@ public class HttpRequestParser {
     private static byte[] readHeader(InputStream inputStream) throws IOException {
         ByteArrayOutputStream headerBytes = new ByteArrayOutputStream();
         int b;
+        int readCount = 0;
         int consecutiveNewlines = 0;
 
-        while ((b = inputStream.read()) != -1) {
+        while ((b = inputStream.read()) != -1 && readCount < MAX_HEADER_SIZE) {
+            readCount++;
             headerBytes.write(b);
             if (b == '\n') {
                 consecutiveNewlines++;
@@ -44,6 +50,11 @@ public class HttpRequestParser {
                 consecutiveNewlines = 0;
             }
         }
+
+        if (consecutiveNewlines != 2) {
+            throw new HttpException(HttpStatus.PAYLOAD_TOO_LARGE);
+        }
+
         return headerBytes.toByteArray();
     }
 
@@ -106,15 +117,24 @@ public class HttpRequestParser {
             return new byte[0];
         }
 
+        if (contentLength > MAX_BODY_SIZE) {
+            throw new HttpException(HttpStatus.PAYLOAD_TOO_LARGE, "요청이 너무 큽니다.");
+        }
+
         byte[] body = new byte[contentLength];
         int bytesRead = 0;
-        while (bytesRead < contentLength) {
-            int read = inputStream.read(body, bytesRead, contentLength - bytesRead);
+        int read;
+        while ((read = inputStream.read(body, bytesRead, contentLength - bytesRead)) != 0) {
             if (read == -1) {
                 break;
             }
             bytesRead += read;
         }
+
+        if(inputStream.available() != 0) {
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Body가 Content-Length보다 큽니다.");
+        }
+
 
         logger.debug("body: {}", new String(body));
         return body;

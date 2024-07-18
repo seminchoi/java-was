@@ -11,6 +11,7 @@ public enum HttpStatus {
     UNAUTHORIZED(401, "Unauthorized"),
     NOT_FOUND(404, "Not Found"),
     CONFLICT(409, "Conflict"),
+    PAYLOAD_TOO_LARGE(413, "Payload Too Large"),
 
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),;
 
