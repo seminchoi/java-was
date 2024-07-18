@@ -15,7 +15,7 @@ import java.util.*;
 
 public class HttpRequestParser {
     private static final int MAX_HEADER_SIZE = 8192;
-    private static final int MAX_BODY_SIZE = 10;
+    private static final int MAX_BODY_SIZE = 10 * 1024 * 1024;
     private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
 
     public static HttpRequest parseRequest(final InputStream inputStream) {
