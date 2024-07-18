@@ -92,6 +92,12 @@
   border: 1px solid #d2dae0;
 }
 
+.textfield_title {
+  gap: 4px;
+  padding: 8px 16px;
+  width: 680px;
+}
+
 .textfield_size_s {
   gap: 4px;
   padding: 8px 16px;

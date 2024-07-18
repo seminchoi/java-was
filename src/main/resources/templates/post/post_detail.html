@@ -6,12 +6,6 @@
     <link href="../reset.css" rel="stylesheet"/>
     <link href="../global.css" rel="stylesheet"/>
     <link href="../main.css" rel="stylesheet"/>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var form = document.getElementById('commentForm');
-            form.action = window.location.pathname + '/comment/create';
-        });
-    </script>
 </head>
 <body>
 <div class="container">
@@ -120,4 +114,10 @@
     </div>
 </div>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('commentForm');
+        form.action = window.location.pathname + '/comment/create';
+    });
+</script>
 </html>

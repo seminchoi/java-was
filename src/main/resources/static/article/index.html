@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="../reset.css" rel="stylesheet" />
     <link href="../global.css" rel="stylesheet" />
+    <link href="../post_create.css" rel="stylesheet" />
   </head>
   <body>
     <div class="container">
       <header class="header">
-        <a href="/main"><img src="../img/signiture.svg" /></a>
+        <a href="/"><img src="../img/signiture.svg" /></a>
         <ul class="header__menu">
           <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
@@ -23,8 +24,8 @@
       </header>
       <div class="page">
         <h2 class="page-title">게시글 작성</h2>
-        <form class="form" method="post" action="/post/create" enctype="multipart/form-data">
-          <div class="textfield textfield_size_s">
+        <form id="post-form" class="form" method="post" action="/post/create" enctype="multipart/form-data">
+          <div class="textfield textfield_title">
             <p class="title_textfield">제목</p>
             <input
                     class="input_textfield"
@@ -45,9 +46,12 @@
           <div class="image-upload">
             <p class="title_textfield">이미지 추가</p>
             <div class="image-upload-container">
-              <label for="image-upload" class="btn btn_ghost btn_size_s">이미지 선택</label>
-              <input type="file" id="image-upload" name="image" accept="image/*">
-              <div id="image-preview" class="image-preview"></div>
+              <input type="file" id="image-upload" name="image" accept="image/*" hidden="hidden">
+              <label for="image-upload" class="image-upload-label">
+                <div id="image-preview" class="image-preview">
+                  <span class="plus-icon">+</span>
+                </div>
+              </label>
             </div>
           </div>
           <button
@@ -67,16 +71,33 @@
 <script>
   document.getElementById('image-upload').addEventListener('change', function(event) {
     const file = event.target.files[0];
+    const preview = document.getElementById('image-preview');
+
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
+        preview.innerHTML = '';
         const img = document.createElement('img');
         img.src = e.target.result;
-        const preview = document.getElementById('image-preview');
-        preview.innerHTML = '';
         preview.appendChild(img);
       }
       reader.readAsDataURL(file);
+    } else {
+      preview.innerHTML = '<span class="plus-icon">+</span>';
     }
   });
+
+  document.getElementById('post-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const imageInput = document.getElementById('image-upload');
+    const imageUploadDiv = document.querySelector('.image-upload');
+
+    if (imageInput.files.length === 0) {
+      imageUploadDiv.remove();
+    }
+
+    this.submit();
+  });
+
 </script>
