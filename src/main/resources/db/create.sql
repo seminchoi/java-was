@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS posts
     id        BIGINT AUTO_INCREMENT PRIMARY KEY,
     title     VARCHAR(255) NOT NULL,
     content   TEXT,
+    image_url VARCHAR(255),
     author_id VARCHAR(255),
     FOREIGN KEY (author_id) REFERENCES users (user_id)
 );

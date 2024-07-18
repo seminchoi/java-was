@@ -6,6 +6,7 @@ import codesquad.app.usecase.UserUsecase;
 import codesquad.container.Container;
 import codesquad.container.ContainerHolder;
 import codesquad.http.HttpMethod;
+import codesquad.server.router.CommonFilePathManager;
 import codesquad.server.router.RouteEntry;
 import codesquad.server.router.RouteEntryManager;
 import codesquad.server.router.StaticFilePathManager;
@@ -16,6 +17,7 @@ public class HttpConfig {
 
         routeEntryConfig(container);
         staticFilePathConfig(container);
+        commonFilePathConfig(container);
     }
 
     private void routeEntryConfig(final Container container) {
@@ -26,43 +28,52 @@ public class HttpConfig {
         CommentUsecase commentUsecase = (CommentUsecase) ContainerHolder.getContainer().getComponent("commentUsecase");
 
         routeEntryManager.add(
-                        new RouteEntry.Builder().route(HttpMethod.GET, "/")
-                                .handler(postUsecase::getPostList)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.POST, "/post/create")
-                                .handler(postUsecase::createPost)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.GET, "/post/{postId}")
-                                .handler(postUsecase::getPostDetail)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.POST, "/post/{postId}/comment/create")
-                                .handler(commentUsecase::createComment)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
-                                .handler(userUsecase::register)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.POST, "/login")
-                                .handler(userUsecase::login)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
-                                .handler(userUsecase::logout)
-                                .build()
-                ).add(
-                        new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
-                                .handler(userUsecase::userList)
-                                .build()
-                );
+                new RouteEntry.Builder().route(HttpMethod.GET, "/")
+                        .handler(postUsecase::getPostList)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.POST, "/post/create")
+                        .handler(postUsecase::createPost)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.GET, "/post/{postId}")
+                        .handler(postUsecase::getPostDetail)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.POST, "/post/{postId}/comment/create")
+                        .handler(commentUsecase::createComment)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.POST, "/user/create")
+                        .handler(userUsecase::register)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.POST, "/login")
+                        .handler(userUsecase::login)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.GET, "/logout")
+                        .handler(userUsecase::logout)
+                        .build()
+        ).add(
+                new RouteEntry.Builder().route(HttpMethod.GET, "/user/list")
+                        .handler(userUsecase::userList)
+                        .build()
+        );
     }
 
     private void staticFilePathConfig(final Container container) {
         StaticFilePathManager staticFilePathManager = (StaticFilePathManager) container.getComponent("staticFilePathManager");
 
-        staticFilePathManager.addPath("static");
+        staticFilePathManager
+                .addPath("static");
+
+    }
+
+    private void commonFilePathConfig(final Container container) {
+        CommonFilePathManager commonFilePathManager = (CommonFilePathManager) container.getComponent("commonFilePathManager");
+
+        commonFilePathManager
+                .addPath(System.getProperty("user.home") + "/java-was/img");
     }
 }

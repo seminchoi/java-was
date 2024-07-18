@@ -11,15 +11,31 @@ public class User {
     private String name;
 
     public User(String userId, String password, String name) {
-        //TODO: 도메인객체가 Http 예외나 상태코드를 알 필요는 없다
-        if (userId == null || userId.isBlank()
-                || password == null || password.isBlank()
-                || name == null || name.isBlank()) {
-            throw new HttpException(HttpStatus.BAD_REQUEST);
-        }
+        validateUserId(userId);
+        validatePassword(password);
+        validateName(name);
+
         this.userId = userId;
         this.password = password;
         this.name = name;
+    }
+
+    private void validateUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new HttpException(HttpStatus.BAD_REQUEST,"사용자 ID를 입력하지 않았습니다.");
+        }
+    }
+
+    private void validatePassword(String password) {
+        if (password == null || password.isBlank()) {
+            throw new HttpException(HttpStatus.BAD_REQUEST,"비밀번호를 입력하지 않았습니다.");
+        }
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new HttpException(HttpStatus.BAD_REQUEST, "이름을 입력하지 않았습니다.");
+        }
     }
 
     public String getUserId() {

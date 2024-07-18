@@ -30,7 +30,7 @@ public class AppFileReader {
 
     public byte[] getBytes() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try(InputStream inputStream = classLoader.getResourceAsStream(path)) {
+        try (InputStream inputStream = classLoader.getResourceAsStream(path)) {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
             byte[] data = new byte[1024];

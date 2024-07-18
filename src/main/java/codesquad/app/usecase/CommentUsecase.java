@@ -31,7 +31,7 @@ public class CommentUsecase {
         Session session = sessionService.getSession(httpRequest);
 
         if(!sessionService.isAuthenticated(session)) {
-            throw new HttpException(HttpStatus.UNAUTHORIZED);
+            throw new HttpException(HttpStatus.UNAUTHORIZED, "로그인 후에 댓글을 작성할 수 있습니다.");
         }
 
         User user = sessionService.getUser(session);
@@ -47,7 +47,7 @@ public class CommentUsecase {
         try {
             commendDao.save(comment);
         } catch (DbConstraintException e) {
-            throw new HttpException(HttpStatus.NOT_FOUND);
+            throw new HttpException(HttpStatus.NOT_FOUND, "해당 게시물을 찾을 수 없습니다.");
         }
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);

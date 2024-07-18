@@ -3,6 +3,7 @@ package codesquad.app.usecase;
 import codesquad.app.model.User;
 import codesquad.app.storage.UserDao;
 import codesquad.container.Component;
+import codesquad.exception.DbConstraintException;
 import codesquad.exception.HttpException;
 import codesquad.http.Cookie;
 import codesquad.http.HttpRequest;
@@ -37,7 +38,11 @@ public class UserUsecase {
 
         User user = new User(userId, password, name);
 
-        userDao.save(user);
+        try {
+            userDao.save(user);
+        } catch (DbConstraintException e) {
+            throw new HttpException(HttpStatus.CONFLICT, "아이디 중복입니다. 다른 아이디를 사용해주세요.");
+        }
 
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
         httpResponse.writeHeader("Location", "/");
@@ -90,13 +95,15 @@ public class UserUsecase {
     public HttpResponse logout(HttpRequest httpRequest) {
         Session session = getSession(httpRequest);
 
-        if (session == null) {
-            throw new HttpException(HttpStatus.UNAUTHORIZED);
+        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
+
+        if (session != null) {
+            sessionStorage.remove(session.getSessionId());
+            Cookie cookie = new Cookie.Builder("SID", session.getSessionId())
+                    .maxAge(0).build();
+            httpResponse.setCookie(cookie.makeHeaderLine());
         }
 
-        sessionStorage.remove(session.getSessionId());
-
-        HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
         httpResponse.writeHeader("Location", "/");
         return httpResponse;
     }

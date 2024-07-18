@@ -29,7 +29,7 @@ public class SocketHandler {
             HttpRequest httpRequest = HttpRequestParser.parseRequest(inputStream);
             OutputStream outputStream = clientSocket.getOutputStream();
 
-            HttpResponse httpResponse = handleRequest(httpRequest);
+            HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
             outputStream.write(httpResponse.makeResponse());
             outputStream.flush();
         } catch (Exception e) {
@@ -41,15 +41,5 @@ public class SocketHandler {
                 logger.error(e.getMessage(), e);
             }
         }
-    }
-
-    private HttpResponse handleRequest(HttpRequest httpRequest) {
-        HttpResponse httpResponse;
-        try {
-            httpResponse = requestHandler.handleRequest(httpRequest);
-        } catch (HttpException e) {
-            httpResponse = HttpResponse.fromHttpException(e);
-        }
-        return httpResponse;
     }
 }

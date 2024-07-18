@@ -16,7 +16,7 @@ public class HttpRequest {
     private final String httpVersion;
     private final Map<String, String> headers;
 
-    private String body;
+    private byte[] body;
 
     public HttpRequest(HttpMethod method, URI uri,
                        String httpVersion, Map<String, String> headers) {
@@ -27,12 +27,12 @@ public class HttpRequest {
         this.headers = headers;
     }
 
-    public void writeBody(String body) {
+    public void writeBody(byte[] body) {
         this.body = body;
     }
 
     public boolean isUrlEndingWithSlash() {
-        if(getPath().equals("/")) {
+        if (getPath().equals("/")) {
             return false;
         }
         return uri.getPath().endsWith("/");
@@ -71,14 +71,14 @@ public class HttpRequest {
     }
 
     public String getCookie(String name) {
-        if(!headers.containsKey("Cookie")) {
+        if (!headers.containsKey("Cookie")) {
             return null;
         }
 
         String[] cookies = headers.get("Cookie").split(";");
         for (String cookie : cookies) {
             String[] pair = cookie.split("=");
-            if(pair[0].trim().equals(name)) {
+            if (pair[0].trim().equals(name)) {
                 return pair[1].trim();
             }
         }
@@ -89,11 +89,45 @@ public class HttpRequest {
         return Integer.parseInt(headers.getOrDefault("Content-Length", "0"));
     }
 
-    public String getBody() {
-        return body;
+    public ContentType getContentType() {
+        String contentTypeHeader = headers.get("Content-Type");
+        if (contentTypeHeader == null) {
+            return null;
+        }
+
+        int index = contentTypeHeader.indexOf(";");
+        if (index == -1) {
+            return ContentType.fromDirective(contentTypeHeader);
+        }
+        String contentTypeCore = contentTypeHeader.substring(0, index).trim();
+        return ContentType.fromDirective(contentTypeCore);
     }
 
-    public Params getBodyByUrlDecodedParams()  {
-        return new Params(body);
+    public String getBoundary() {
+        String contentTypeHeader = headers.get("Content-Type");
+        if (contentTypeHeader == null) {
+            return null;
+        }
+
+        int index = contentTypeHeader.indexOf("boundary=");
+        if (index == -1) {
+            return null;
+        }
+
+        String boundary = contentTypeHeader.substring(index + 9).trim();
+        if (boundary.startsWith("\"") && boundary.endsWith("\"")) {
+            boundary = boundary.substring(1, boundary.length() - 1);
+        }
+
+        return boundary;
+    }
+
+
+    public String getBody() {
+        return new String(body);
+    }
+
+    public Params getBodyByUrlDecodedParams() {
+        return new Params(body, getContentType(), getBoundary());
     }
 }

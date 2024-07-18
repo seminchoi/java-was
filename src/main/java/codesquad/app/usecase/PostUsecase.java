@@ -3,6 +3,7 @@ package codesquad.app.usecase;
 import codesquad.app.model.Comment;
 import codesquad.app.model.Post;
 import codesquad.app.model.User;
+import codesquad.app.service.AppFileWriter;
 import codesquad.app.service.SessionService;
 import codesquad.app.storage.CommentDao;
 import codesquad.app.storage.PostDao;
@@ -13,6 +14,7 @@ import codesquad.http.HttpRequest;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
 import codesquad.http.security.Session;
+import codesquad.http.structure.MultiPartFile;
 import codesquad.http.structure.Params;
 import codesquad.template.DynamicHtml;
 
@@ -63,11 +65,23 @@ public class PostUsecase {
 
         Params params = httpRequest.getBodyByUrlDecodedParams();
 
+        AppFileWriter appFileWriter = new AppFileWriter();
+        MultiPartFile image = params.getFile("image");
+        String imageUrl = null;
+        if (image != null) {
+            if(!image.getContentType().getDirective().startsWith("image")) {
+                throw new HttpException(HttpStatus.BAD_REQUEST, "이미지만 업로드 할 수 있습니다.");
+            }
+            imageUrl = appFileWriter.saveFile(image);
+        }
+
         Post post = new Post(
                 params.get("title"),
                 params.get("content"),
+                imageUrl,
                 user.getUserId()
         );
+
 
         postDao.save(post);
         HttpResponse httpResponse = new HttpResponse(HttpStatus.FOUND);
@@ -85,11 +99,20 @@ public class PostUsecase {
                 new HttpException(HttpStatus.NOT_FOUND)
         );
         DynamicHtml dynamicHtml = new DynamicHtml();
+
+        Session session = sessionService.getSession(httpRequest);
+        if (sessionService.isAuthenticated(session)) {
+            User user = sessionService.getUser(session);
+            dynamicHtml.setArg("authenticated", true);
+            dynamicHtml.setArg("user", user);
+        }
+
         dynamicHtml.setTemplate("/post/post_detail.html");
         dynamicHtml.setArg("post", post);
 
+
         User user = userDao.findById(post.getAuthorId()).orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND));
-        dynamicHtml.setArg("user", user);
+        dynamicHtml.setArg("author", user);
 
         List<Comment> comments = commentDao.findByPostId(post.getId());
         dynamicHtml.setArg("comments", comments);

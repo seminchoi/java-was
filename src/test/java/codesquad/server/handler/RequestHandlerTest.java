@@ -28,8 +28,16 @@ class RequestHandlerTest {
         public List<String> getTargets() {
             return List.of("codesquad.server.handler.RequestHandler",
                     "codesquad.server.handler.StaticFileHandler",
+                    "codesquad.server.handler.CommonFileHandler",
+                    "codesquad.server.handler.ErrorHandler",
+                    "codesquad.http.security.SessionStorage",
+                    "codesquad.app.storage.RdbmsUserDao",
+                    "codesquad.db.H2ConnectionPoolManager",
+                    "codesquad.db.TestDataSourceConfigurer",
+                    "codesquad.app.service.SessionService",
                     "codesquad.server.router.RouteEntryManager",
-                    "codesquad.server.router.StaticFilePathManager"
+                    "codesquad.server.router.StaticFilePathManager",
+                    "codesquad.server.router.CommonFilePathManager"
             );
         }
 
@@ -73,8 +81,10 @@ class RequestHandlerTest {
     void GET_요청이_파일일_때_파일이_없으면_NOT_FOUND를_반환한다() throws URISyntaxException {
         HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/hello.html");
 
-        assertThatThrownBy(() -> requestHandler.handleRequest(httpRequest))
-                .isInstanceOf(HttpException.class);
+        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        String response = new String(httpResponse.makeResponse());
+
+        assertTrue(response.contains("HTTP/1.1 404 Not Found"));
     }
 
     @Test

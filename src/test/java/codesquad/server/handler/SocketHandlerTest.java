@@ -32,26 +32,13 @@ public class SocketHandlerTest {
         Assertions.assertThat(testSocket.getOutputStreamContent()).contains("HTTP/1.1 200 OK\r\n");
     }
 
-    @Test
-    public void handler가_예외를_발생하면_소켓_OutputStream에_예외_타입에_맞는_응답을_작성한다() {
-        TestSocket testSocket = new TestSocket();
-        String httpRequestContent = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
-        testSocket.setInputStreamContent(httpRequestContent);
-
-        mockRequestHandler.setThrowException(true);
-        socketHandler.handle(testSocket);
-
-        Assertions.assertThat(testSocket.getOutputStreamContent()).contains("HTTP/1.1 404 Not Found\r\n");
-
-    }
-
     private static class MockRequestHandler extends RequestHandler {
 
         private HttpResponse httpResponse;
         private boolean throwException = false;
 
         public MockRequestHandler() {
-            super(null, null); // 부모 클래스의 생성자를 호출, 필요한 매개변수는 null로 설정
+            super(null, null, null, null); // 부모 클래스의 생성자를 호출, 필요한 매개변수는 null로 설정
         }
 
         public void setHttpResponse(HttpResponse response) {
