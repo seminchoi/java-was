@@ -28,18 +28,20 @@ public class ErrorHandler {
         }
 
         DynamicHtml dynamicHtml = new DynamicHtml();
-
-        Session session = sessionService.getSession(httpRequest);
-        if(sessionService.isAuthenticated(session)) {
-            User user = sessionService.getUser(session);
-            dynamicHtml.setArg("authenticated", true);
-            dynamicHtml.setArg("user", user);
-        }
-
-        ExceptionDto exceptionDto = new ExceptionDto(httpException);
-
         dynamicHtml.setTemplate(ERROR_PATH);
-        dynamicHtml.setArg("exception", exceptionDto);
+
+        if(httpRequest != null) {
+            Session session = sessionService.getSession(httpRequest);
+            if (sessionService.isAuthenticated(session)) {
+                User user = sessionService.getUser(session);
+                dynamicHtml.setArg("authenticated", true);
+                dynamicHtml.setArg("user", user);
+            }
+
+            ExceptionDto exceptionDto = new ExceptionDto(httpException);
+
+            dynamicHtml.setArg("exception", exceptionDto);
+        }
 
         return dynamicHtml.process(httpException.getHttpStatus());
     }

@@ -3,6 +3,7 @@ package codesquad.server.handler;
 import codesquad.container.Component;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpRequest;
+import codesquad.http.HttpRequestParser;
 import codesquad.http.HttpResponse;
 import codesquad.http.HttpStatus;
 import codesquad.server.router.RouteEntry;
@@ -10,6 +11,8 @@ import codesquad.server.router.RouteEntryManager;
 import codesquad.template.DynamicHtml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
 
 @Component
 public class RequestHandler {
@@ -28,17 +31,14 @@ public class RequestHandler {
         this.errorHandler = errorHandler;
     }
 
-    public HttpResponse handleRequest(HttpRequest httpRequest) {
-        if (httpRequest.isUrlEndingWithSlash()) {
-            HttpResponse httpResponse = new HttpResponse(HttpStatus.SEE_OTHER);
-            httpResponse.writeHeader("Location", httpRequest.getPath().substring(0, httpRequest.getPath().length() - 1));
-            return httpResponse;
-        }
-
+    public HttpResponse handleRequest(InputStream inputStream) {
+        HttpRequest httpRequest = null;
         HttpResponse httpResponse;
         try {
+            httpRequest = HttpRequestParser.parseRequest(inputStream);
             httpResponse = handle(httpRequest);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             httpResponse = errorHandler.handle(httpRequest, e);
         }
 
@@ -46,6 +46,12 @@ public class RequestHandler {
     }
 
     private HttpResponse handle(HttpRequest httpRequest) {
+        if (httpRequest.isUrlEndingWithSlash()) {
+            HttpResponse httpResponse = new HttpResponse(HttpStatus.SEE_OTHER);
+            httpResponse.writeHeader("Location", httpRequest.getPath().substring(0, httpRequest.getPath().length() - 1));
+            return httpResponse;
+        }
+
         HttpResponse httpResponse = null;
 
         for (RouteEntry entry : routeEntryManager.getRouteEntries()) {

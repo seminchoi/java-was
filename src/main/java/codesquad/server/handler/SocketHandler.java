@@ -15,6 +15,7 @@ import java.net.Socket;
 
 @Component
 public class SocketHandler {
+    private static final int TIME_OUT_SECONDS =  10 * 1000;
     private static final Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 
     private final RequestHandler requestHandler;
@@ -25,11 +26,11 @@ public class SocketHandler {
 
     public void handle(Socket clientSocket) {
         try {
+            clientSocket.setSoTimeout(TIME_OUT_SECONDS);
             InputStream inputStream = clientSocket.getInputStream();
-            HttpRequest httpRequest = HttpRequestParser.parseRequest(inputStream);
             OutputStream outputStream = clientSocket.getOutputStream();
 
-            HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+            HttpResponse httpResponse = requestHandler.handleRequest(inputStream);
             outputStream.write(httpResponse.makeResponse());
             outputStream.flush();
         } catch (Exception e) {
