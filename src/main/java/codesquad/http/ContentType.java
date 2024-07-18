@@ -15,6 +15,8 @@ public enum ContentType {
     IMAGE_SVG_XML("svg", "image/svg+xml"),
     IMAGE_PNG("png", "image/png"),
     IMAGE_JPG("jpg", "image/jpg"),
+    IMAGE_WEBP("webp", "image/webp"),
+    IMAGE_GIF("gif", "image/gif"),
 
     APPLICATION_OCTET_STREAM(".none", "application/octet-stream"),
     APPLICATION_X_WWW_FORM_URLENCODED("xhtml", "application/x-www-form-urlencoded"),
@@ -55,5 +57,9 @@ public enum ContentType {
 
     public String makeHeaderLine() {
         return headerName + ": " + directive + "\r\n";
+    }
+
+    public boolean isImage() {
+        return directive.startsWith("image/");
     }
 }
