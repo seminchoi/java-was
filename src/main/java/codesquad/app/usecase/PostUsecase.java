@@ -69,7 +69,7 @@ public class PostUsecase {
         MultiPartFile image = params.getFile("image");
         String imageUrl = null;
         if (image != null) {
-            if(!image.getContentType().getDirective().startsWith("img")) {
+            if(!image.getContentType().getDirective().startsWith("image")) {
                 throw new HttpException(HttpStatus.BAD_REQUEST, "이미지만 업로드 할 수 있습니다.");
             }
             imageUrl = appFileWriter.saveFile(image);
