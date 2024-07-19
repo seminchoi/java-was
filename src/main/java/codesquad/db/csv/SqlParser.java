@@ -7,6 +7,11 @@ import java.util.*;
 import java.util.regex.*;
 
 public class SqlParser {
+    private static final Pattern INSERT_PATTERN = Pattern.compile("insert into (\\w+) \\(([\\w,\\s]+)\\) values \\(([\\w\\W,]+)\\)");
+    private static final Pattern SELECT_PATTERN = Pattern.compile("select (.+) from (\\w+)");
+    private static final Pattern WHERE_PATTERN = Pattern.compile("([\\w]+) ([><=]) (.+)");
+    private static final Pattern CREATE_PATTERN = Pattern.compile("create table if not exists (\\w+)\\s+\\(\\s+([\\w\\d\\s_\\(\\),]+)\\s+\\)");
+
 
     public static CsvCommand parse(String sql) throws SQLException {
         sql = sql.trim().toLowerCase();
@@ -27,8 +32,7 @@ public class SqlParser {
     }
 
     private static CsvInsert parseInsert(String sql) throws SQLException {
-        Pattern pattern = Pattern.compile("insert into (\\w+) \\(([\\w,\\s]+)\\) values \\(([\\w\\W,]+)\\)");
-        Matcher matcher = pattern.matcher(sql);
+        Matcher matcher = INSERT_PATTERN.matcher(sql);
         if (!matcher.find()) {
             throw new SQLException("Invalid INSERT statement");
         }
@@ -52,8 +56,7 @@ public class SqlParser {
     private static CsvSelect parseSelect(String sql) throws SQLException {
         boolean hasWhere = false;
         String[] split = sql.split("where");
-        Pattern pattern = Pattern.compile("select (.+) from (\\w+)");
-        Matcher matcher = pattern.matcher(split[0]);
+        Matcher matcher = SELECT_PATTERN.matcher(split[0]);
         if (!matcher.find()) {
             throw new SQLException("Invalid SELECT statement");
         }
@@ -70,8 +73,7 @@ public class SqlParser {
 
         if(split.length > 1) {
             hasWhere = true;
-            Pattern pattern2 = Pattern.compile("([\\w]+) ([><=]) (.+)");
-            Matcher matcher2 = pattern2.matcher(split[1]);
+            Matcher matcher2 = WHERE_PATTERN.matcher(split[1]);
 
             if(matcher2.find()) {
                 column = matcher2.group(1);
@@ -94,8 +96,7 @@ public class SqlParser {
     }
 
     private static CsvCreate parseCreate(String sql) {
-        Pattern pattern = Pattern.compile("create table if not exists (\\w+)\\s+\\(\\s+([\\w\\d\\s_\\(\\),]+)\\s+\\)");
-        Matcher matcher = pattern.matcher(sql);
+        Matcher matcher = CREATE_PATTERN.matcher(sql);
         if (!matcher.find()) {
             throw new IllegalArgumentException("Invalid CREATE statement");
         }
