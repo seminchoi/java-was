@@ -9,12 +9,14 @@ import org.h2.tools.Server;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class H2ConnectionPoolManager implements ConnectionPoolManager {
+@Component
+public class TestH2ConnectionPoolManager implements ConnectionPoolManager {
     private static final String homePath = System.getProperty("user.home");
     private static final String CREATE_SQL_FILE_PATH = "db/create.sql";
     private static final String DROP_SQL_FILE_PATH = "db/drop.sql";
@@ -23,12 +25,11 @@ public class H2ConnectionPoolManager implements ConnectionPoolManager {
     private final JdbcConnectionPool jdbcConnectionPool;
 
 
-    public H2ConnectionPoolManager(DataSourceConfigurer dataSourceConfigurer) {
+    public TestH2ConnectionPoolManager(DataSourceConfigurer dataSourceConfigurer) {
         try {
-            initFile();
             initServer();
             initTable(dataSourceConfigurer);
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
@@ -40,29 +41,21 @@ public class H2ConnectionPoolManager implements ConnectionPoolManager {
     }
 
     private void initServer() throws SQLException {
-        Server.createTcpServer("-tcp", "-tcpPort", "9092").start();
-    }
-
-    private void initFile() throws IOException {
-        File wasDir = new File(homePath, "java-was");
-        if (!wasDir.exists()) {
-            wasDir.mkdirs();
-        }
-
-        final String UPLOAD_DIR_PATH = "db";
-        DB_DIR = new File(wasDir, UPLOAD_DIR_PATH);
-
-        if (!DB_DIR.exists()) {
-            DB_DIR.mkdirs();
-        }
-
-        File wasDb = new File(DB_DIR, "was.mv.db");
-        if (!wasDb.exists()) {
-            wasDb.createNewFile();
+        if (!isPortInUse(9092)) {
+            Server.createTcpServer("-tcp", "-tcpPort", "9092").start();
         }
     }
 
-    private void initTable(DataSourceConfigurer dataSourceConfigurer) throws SQLException {
+    private boolean isPortInUse(int port) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            serverSocket.setReuseAddress(true);
+            return false; // 포트가 사용 중이 아님
+        } catch (IOException e) {
+            return true; // 포트가 이미 사용 중임
+        }
+    }
+
+    public void initTable(DataSourceConfigurer dataSourceConfigurer) throws SQLException {
         Connection connection = DriverManager.getConnection(
                 dataSourceConfigurer.getURL(),
                 dataSourceConfigurer.getUsername(),

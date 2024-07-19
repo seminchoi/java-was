@@ -9,6 +9,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
+
 public class SocketHandlerTest {
     private MockRequestHandler mockRequestHandler;
     private SocketHandler socketHandler;
@@ -50,7 +52,7 @@ public class SocketHandlerTest {
         }
 
         @Override
-        public HttpResponse handleRequest(HttpRequest httpRequest) {
+        public HttpResponse handleRequest(InputStream inputStream) {
             if (throwException) {
                 throw new HttpException(HttpStatus.NOT_FOUND);
             }

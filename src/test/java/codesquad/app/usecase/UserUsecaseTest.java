@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserUsecaseTest {
+    //Todo: database test
     private UserUsecase userUsecase;
     private InMemoryUserDao userStorage;
     private SessionStorage sessionStorage;

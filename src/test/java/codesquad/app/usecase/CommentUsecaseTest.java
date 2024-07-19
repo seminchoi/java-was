@@ -11,6 +11,7 @@ import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
 import codesquad.util.ContainerUtils;
 import codesquad.util.LoginUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,22 +23,22 @@ import static codesquad.util.HttpRequestUtil.createHttpRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class CommentUsecaseTest {
-    private Container container;
-    private CommentUsecase commentUsecase;
+public class CommentUsecaseTest extends TestWithTestDatabase {
+    private static CommentUsecase commentUsecase;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         ContainerConfigurer containerConfigurer = ContainerUtils.createContainerConfigurer(
                 "codesquad.app.usecase.PostUsecase",
                 "codesquad.app.usecase.CommentUsecase",
                 "codesquad.app.usecase.UserUsecase",
+                "codesquad.app.service.TemplateHeaderService",
                 "codesquad.app.storage.RdbmsPostDao",
                 "codesquad.app.storage.RdbmsUserDao",
                 "codesquad.app.storage.RdbmsCommentDao",
                 "codesquad.http.security.SessionStorage",
                 "codesquad.db.TestDataSourceConfigurer",
-                "codesquad.db.H2ConnectionPoolManager",
+                "codesquad.db.TestH2ConnectionPoolManager",
                 "codesquad.app.service.SessionService"
         );
 

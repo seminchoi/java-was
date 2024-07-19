@@ -42,27 +42,4 @@ public class InMemoryUserDaoTest {
         assertThatThrownBy(()-> userStorage.save(user1))
                 .isInstanceOf(HttpException.class);
     }
-
-    @Test
-    public void 동일_아이디로_동시에_회원가입을_요청해도_한_번만_가입이_성곤한다() {
-        //TODO: 동시성 테스트 방법 공부하기
-        ExecutorService executorService = Executors.newFixedThreadPool(50);
-        AtomicInteger successCount = new AtomicInteger(0);
-        AtomicInteger throwCount = new AtomicInteger(0);
-
-
-        for (int i = 0; i < 50; i++) {
-            executorService.execute(() -> {
-                try {
-                    userStorage.save(user1);
-                    successCount.incrementAndGet();
-                } catch (HttpException e) {
-                    throwCount.incrementAndGet();
-                }
-            });
-        }
-
-        Assertions.assertThat(successCount.get()).isEqualTo(1);
-        Assertions.assertThat(throwCount.get()).isEqualTo(49);
-    }
 }

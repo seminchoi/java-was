@@ -15,6 +15,8 @@ import codesquad.util.HttpRequestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -33,6 +35,7 @@ class RequestHandlerTest {
                     "codesquad.http.security.SessionStorage",
                     "codesquad.app.storage.RdbmsUserDao",
                     "codesquad.db.H2ConnectionPoolManager",
+                    "codesquad.db.CsvDataSource",
                     "codesquad.db.TestDataSourceConfigurer",
                     "codesquad.app.service.SessionService",
                     "codesquad.server.router.RouteEntryManager",
@@ -51,7 +54,6 @@ class RequestHandlerTest {
 
     @BeforeEach
     void setUp() {
-
         ContainerHolder.init(containerConfigurer);
         Container container = ContainerHolder.getContainer();
         RouteEntryManager routeEntryManager = (RouteEntryManager) container.getComponent("routeEntryManager");
@@ -67,9 +69,8 @@ class RequestHandlerTest {
 
     @Test
     void GET_요청이_파일일_때_파일이_있으면_파일을_읽어서_반환한다() throws URISyntaxException {
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/hello.hi.html");
-
-        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        InputStream requestInputStream = HttpRequestUtil.createHttpRequestInputStream("/hello.hi.html");
+        HttpResponse httpResponse = requestHandler.handleRequest(requestInputStream);
         String response = new String(httpResponse.makeResponse());
 
         assertTrue(response.contains("HTTP/1.1 200 OK"));
@@ -79,9 +80,9 @@ class RequestHandlerTest {
 
     @Test
     void GET_요청이_파일일_때_파일이_없으면_NOT_FOUND를_반환한다() throws URISyntaxException {
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/hello.html");
+        InputStream requestInputStream = HttpRequestUtil.createHttpRequestInputStream("/hello.html");
 
-        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        HttpResponse httpResponse = requestHandler.handleRequest(requestInputStream);
         String response = new String(httpResponse.makeResponse());
 
         assertTrue(response.contains("HTTP/1.1 404 Not Found"));
@@ -89,9 +90,9 @@ class RequestHandlerTest {
 
     @Test
     void 요청_URI가_슬래쉬로_끝나면_슬래쉬를_제거한_URI로_리다이렉트_한다() throws URISyntaxException {
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/hello.hi.html/");
+        InputStream requestInputStream = HttpRequestUtil.createHttpRequestInputStream("/hello.hi.html/");
 
-        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        HttpResponse httpResponse = requestHandler.handleRequest(requestInputStream);
         String response = new String(httpResponse.makeResponse());
 
         assertThat(response).contains("HTTP/1.1 303 See Other");
@@ -100,9 +101,9 @@ class RequestHandlerTest {
 
     @Test
     void 요청_URI가_RouteEntryManager에_등록되어_있으면_요청을_핸들링한다() throws URISyntaxException {
-        HttpRequest httpRequest = HttpRequestUtil.createHttpRequest("/hello");
+        InputStream requestInputStream = HttpRequestUtil.createHttpRequestInputStream("/hello");
 
-        HttpResponse httpResponse = requestHandler.handleRequest(httpRequest);
+        HttpResponse httpResponse = requestHandler.handleRequest(requestInputStream);
         String response = new String(httpResponse.makeResponse());
 
         assertTrue(response.contains("HTTP/1.1 200 OK"));

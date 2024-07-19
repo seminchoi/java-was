@@ -6,7 +6,7 @@ import codesquad.container.Component;
 public class TestDataSourceConfigurer implements DataSourceConfigurer {
     @Override
     public String getURL() {
-        return "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
+        return "jdbc:h2:mem:testdb";
     }
 
     @Override

@@ -4,6 +4,8 @@ import codesquad.app.model.Post;
 import codesquad.app.storage.RdbmsPostDao;
 import codesquad.container.Container;
 import codesquad.container.ContainerConfigurer;
+import codesquad.db.TestDataSourceConfigurer;
+import codesquad.db.TestH2ConnectionPoolManager;
 import codesquad.exception.HttpException;
 import codesquad.http.HttpMethod;
 import codesquad.http.HttpRequest;
@@ -12,10 +14,13 @@ import codesquad.template.DynamicHtml;
 import codesquad.util.ContainerUtils;
 import codesquad.util.HttpRequestUtil;
 import codesquad.util.LoginUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
@@ -24,22 +29,22 @@ import static codesquad.util.LoginUtils.createHeaders;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class PostUsecaseTest {
-    private Container container;
-    private PostUsecase postUsecase;
+public class PostUsecaseTest extends TestWithTestDatabase {
+    private static PostUsecase postUsecase;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         ContainerConfigurer containerConfigurer = ContainerUtils.createContainerConfigurer(
                 "codesquad.app.usecase.PostUsecase",
                 "codesquad.app.usecase.CommentUsecase",
+                "codesquad.app.service.TemplateHeaderService",
                 "codesquad.app.usecase.UserUsecase",
                 "codesquad.app.storage.RdbmsPostDao",
                 "codesquad.app.storage.RdbmsUserDao",
                 "codesquad.app.storage.RdbmsCommentDao",
                 "codesquad.http.security.SessionStorage",
                 "codesquad.db.TestDataSourceConfigurer",
-                "codesquad.db.H2ConnectionPoolManager",
+                "codesquad.db.TestH2ConnectionPoolManager",
                 "codesquad.app.service.SessionService"
         );
 

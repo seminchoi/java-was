@@ -130,4 +130,21 @@ public class HttpRequest {
     public Params getBodyByUrlDecodedParams() {
         return new Params(body, getContentType(), getBoundary());
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(method).append(" ").append(uri.getPath()).append(" ").append(httpVersion).append("\r\n");
+
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            sb.append(header.getKey()).append(": ").append(header.getValue()).append("\r\n");
+        }
+        sb.append("\r\n");
+
+        if (body != null && body.length > 0) {
+            sb.append(new String(body));
+        }
+
+        return sb.toString();
+    }
 }
