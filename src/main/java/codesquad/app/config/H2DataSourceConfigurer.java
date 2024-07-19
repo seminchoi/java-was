@@ -4,6 +4,7 @@ import codesquad.container.Component;
 import codesquad.db.DDLOption;
 import codesquad.db.DataSourceConfigurer;
 
+@Component
 public class H2DataSourceConfigurer implements DataSourceConfigurer {
     @Override
     public String getURL() {

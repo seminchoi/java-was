@@ -1,10 +1,8 @@
 package codesquad.app.config;
 
-import codesquad.container.Component;
 import codesquad.db.DDLOption;
 import codesquad.db.DataSourceConfigurer;
 
-@Component
 public class CsvDataSourceConfigurer implements DataSourceConfigurer {
 
     @Override
