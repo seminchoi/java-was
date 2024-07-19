@@ -34,14 +34,14 @@ public class RdbmsPostDao implements PostDao {
 
     @Override
     public Optional<Post> findById(Long id) {
-        final String sql = "SELECT * FROM posts WHERE id = ?";
+        final String sql = "SELECT id,title,content,image_url,author_id FROM posts WHERE id = ?";
         Post post = queryTemplate.queryForObject(sql, postRowMapper, id);
         return Optional.ofNullable(post);
     }
 
     @Override
     public List<Post> findAll() {
-        final String sql = "SELECT * FROM posts";
+        final String sql = "SELECT id,title,content,image_url,author_id FROM posts";
         return queryTemplate.query(sql, postRowMapper);
     }
 

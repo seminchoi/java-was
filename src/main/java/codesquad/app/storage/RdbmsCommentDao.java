@@ -32,7 +32,7 @@ public class RdbmsCommentDao implements CommentDao {
 
     @Override
     public Optional<Comment> findById(Long id) {
-        String sql = "SELECT * FROM comments WHERE id = ?";
+        String sql = "SELECT id, content, post_id, author_id FROM comments WHERE id = ?";
         return Optional.ofNullable(queryTemplate.queryForObject(
                 sql, resultSetMapper, id
         ));
@@ -40,12 +40,12 @@ public class RdbmsCommentDao implements CommentDao {
 
     @Override
     public List<Comment> findAll() {
-        String sql = "SELECT * FROM comments";
+        String sql = "SELECT id, content, post_id, author_id FROM comments";
         return queryTemplate.query(sql, resultSetMapper);
     }
 
     public List<Comment> findByPostId(Long postId) {
-        String sql = "SELECT * FROM comments WHERE post_id = ?";
+        String sql = "SELECT id, content, post_id, author_id FROM comments WHERE post_id = ?";
         return queryTemplate.query(sql, resultSetMapper, postId);
     }
 }

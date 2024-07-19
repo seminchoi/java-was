@@ -33,7 +33,7 @@ public class RdbmsUserDao implements UserDao {
 
     @Override
     public Optional<User> findById(String userId) {
-        String sql = "SELECT * FROM users WHERE user_id = ?";
+        String sql = "SELECT user_id, name, password FROM users WHERE user_id = ?";
         User user = queryTemplate.queryForObject(sql, USER_ROW_MAPPER, userId);
         return Optional.ofNullable(user);
     }
