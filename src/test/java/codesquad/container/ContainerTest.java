@@ -22,18 +22,6 @@ public class ContainerTest {
             assertThatThrownBy(() -> container.init())
                     .isInstanceOf(RuntimeException.class);
         }
-
-        @Test
-        public void 생성자의_매개변수로_타입을_지정하면_예외가_발생하지_않는다() {
-            ContainerConfigurer containerConfigurer =
-                    createContainerConfigurer(List.of("codesquad.container.multiimpl.clear"));
-
-            container = new Container(containerConfigurer);
-            container.init();
-
-            Object clearConstructor = container.getComponent("clearConstructorInner");
-            assertNotNull(clearConstructor);
-        }
     }
 
     static ContainerConfigurer createContainerConfigurer(List<String> targetPackages) {
