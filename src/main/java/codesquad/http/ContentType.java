@@ -15,6 +15,7 @@ public enum ContentType {
     IMAGE_SVG_XML("svg", "image/svg+xml"),
     IMAGE_PNG("png", "image/png"),
     IMAGE_JPG("jpg", "image/jpg"),
+    IMAGE_JPEG("jpeg", "image/jpeg"),
     IMAGE_WEBP("webp", "image/webp"),
     IMAGE_GIF("gif", "image/gif"),
 
