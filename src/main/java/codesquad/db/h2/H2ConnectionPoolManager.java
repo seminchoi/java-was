@@ -11,10 +11,7 @@ import org.h2.tools.Server;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 @Component
 public class H2ConnectionPoolManager implements ConnectionPoolManager {

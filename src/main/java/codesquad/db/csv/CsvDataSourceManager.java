@@ -62,6 +62,12 @@ public class CsvDataSourceManager implements ConnectionPoolManager {
     }
 
     private void initTable(DataSourceConfigurer dataSourceConfigurer) throws SQLException {
+        try {
+            DriverManager.registerDriver(new CsvDriver());
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't register driver!");
+        }
+
         Connection connection = DriverManager.getConnection(
                 dataSourceConfigurer.getURL(),
                 dataSourceConfigurer.getUsername(),

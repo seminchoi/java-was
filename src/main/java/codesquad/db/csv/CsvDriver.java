@@ -5,13 +5,6 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 public class CsvDriver implements Driver {
-    static {
-        try {
-            DriverManager.registerDriver(new CsvDriver());
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't register driver!");
-        }
-    }
 
     @Override
     public Connection connect(String url, Properties info) throws SQLException {
