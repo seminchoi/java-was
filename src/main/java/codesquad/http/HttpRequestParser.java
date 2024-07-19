@@ -55,6 +55,7 @@ public class HttpRequestParser {
             throw new HttpException(HttpStatus.PAYLOAD_TOO_LARGE);
         }
 
+        logger.info(headerBytes.toString());
         return headerBytes.toByteArray();
     }
 
@@ -136,7 +137,6 @@ public class HttpRequestParser {
         }
 
 
-        logger.debug("body: {}", new String(body));
         return body;
     }
 }
