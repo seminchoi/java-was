@@ -37,10 +37,15 @@ public class H2ConnectionPoolManager implements ConnectionPoolManager {
         jdbcDataSource.setUser(dataSourceConfigurer.getUsername());
         jdbcDataSource.setPassword(dataSourceConfigurer.getPassword());
         this.jdbcConnectionPool = JdbcConnectionPool.create(jdbcDataSource);
+
+        jdbcConnectionPool.setMaxConnections(10);
     }
 
     private void initServer() throws SQLException {
-        Server.createTcpServer("-tcp", "-tcpPort", "9092").start();
+        Server.createTcpServer("-tcp", "-tcpPort", "9092", "-tcpAllowOthers", "-baseDir", "~/java-was/db").start();
+        Server.createWebServer("-web", "-webAllowOthers",
+                "-webPort", "8082"
+        ).start();
     }
 
     private void initFile() throws IOException {

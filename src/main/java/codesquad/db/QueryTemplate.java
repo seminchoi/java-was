@@ -18,17 +18,18 @@ public class QueryTemplate {
     }
 
     public <T> T queryForObject(String sql, ResultSetMapper<T> resultSetMapper, Object... values) {
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             for (int i = 1; i <= values.length; i++) {
                 preparedStatement.setObject(i, values[i - 1]);
             }
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSetMapper.map(resultSet);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSetMapper.map(resultSet);
+                }
+                return null;
             }
-            return null;
         } catch (SQLIntegrityConstraintViolationException e) {
             throw new DbConstraintException();
         } catch (SQLException e) {
@@ -60,8 +61,8 @@ public class QueryTemplate {
 
     public <T> List<T> query(String sql, ResultSetMapper<T> resultSetMapper, Object... values) {
         List<T> results = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)){
 
             for (int i = 1; i <= values.length; i++) {
                 preparedStatement.setObject(i, values[i - 1]);

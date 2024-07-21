@@ -8,7 +8,7 @@ import codesquad.db.DataSourceConfigurer;
 public class H2DataSourceConfigurer implements DataSourceConfigurer {
     @Override
     public String getURL() {
-        return "jdbc:h2:tcp://localhost:9092/~/java-was/db/was";
+        return "jdbc:h2:tcp://localhost:9092/~/java-was/db/was;LOCK_MODE=0;AUTO_SERVER=TRUE";
     }
 
     @Override
