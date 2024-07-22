@@ -124,9 +124,12 @@ public class DynamicHtml {
             String[] content = matcher.group(1).split("\\.");
             String itemName = content[0];
             Object item = arguments.get(itemName);
-            String fieldValue = item.toString();
-            if (content.length == 2) {
-                fieldValue = getFieldValue(item, content[1]);
+            String fieldValue = "";
+            if (item != null) {
+                fieldValue = item.toString();
+                if (content.length == 2) {
+                    fieldValue = getFieldValue(item, content[1]);
+                }
             }
             matcher.appendReplacement(builder, fieldValue);
         }
